@@ -1,8 +1,8 @@
 # Overview
 
-This is not a comprehensive documentation. 
+This is not a comprehensive guide. 
 
-I will update this file as time allows.
+I will update this file as time permits.
 
 # Peer Dependencies
 
