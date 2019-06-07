@@ -33,7 +33,7 @@ SOFTWARE.
 })(typeof self !== 'undefined' ? self : this, function(angular) {
   angular
   
-  .module('mutable-table')
+  .module('mutable-table', ['xeditable'])
 
   .value('mtP2pLinkFactory', function() {
     return function(scope, elem, attr, [form]) {
