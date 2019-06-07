@@ -1,6 +1,6 @@
 {
   "name": "angularjs-mutable-table",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "An angularjs module with helpful features for creating mutable tables",
   "main": "index.js",
   "repository": {
