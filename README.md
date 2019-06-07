@@ -1,3 +1,9 @@
+# Overview
+
+This is not a comprehensive documentation. 
+
+I will update this file as time allows.
+
 # Peer Dependencies
 
 - AngularJS (^1.4.0)
@@ -70,7 +76,8 @@ You can add, remove and sort values.
 Adding a new value will create a new column, and new cells will be generated.
 
 Removing a value will remove cells in that column.
-Sorting the array will sort the columns.
+
+Sorting it will sort the columns.
 
 ```
 $scope.myMutableTable.columnHeads.push("Foo"); 
@@ -138,3 +145,24 @@ A helper method that removes the column at a given (0-based) index.
 $scope.myMutableTable.removeColumn(0);
 ```
 
+#### <a name="addRow">addRow</a>
+
+Same as [addColumn](#addColumn), but for rows.
+
+#### <a name="removeRow">removeRow</a>
+
+Same as [removeColumn](#removeColumn), but for rows.
+
+#### <a name="addCells">addCells</a>
+
+Generates missing cells for values in the columnHead or rowStub arrays.
+
+#### <a name="removeCells">removeCells</a>
+
+Removes cells that do not have corresponding values in the columnHead or rowStub arrays.
+
+#### <a name="render">render</a>
+
+Generates the tableModel object by referencing the [cells](#cells) objects, updating the table in the view.
+
+If you make direct changes to the [cells](#cells) array, calling this method will render the changes to the view.
