@@ -123,19 +123,51 @@ SOFTWARE.
       }
       
       function controller($scope, $attrs) {
-        var self = $attrs.name ? $scope.$parent[$attrs.name] = this : this;
+        var self = $attrs.name ? $scope.$parent[$attrs.name] = this : this,
         
-        // Public properties
-        
+        // @Private properties
+
         /**
          * An array of strings that define the column heads.
          */
-        self.columnHeads = [];
-        
+        columnHeads = [],
+
         /**
          * An array of strings that define the row stubs.
          */
-        self.rowStubs = [];
+        rowStubs = [];
+
+        // @Public properties
+
+        /**
+         * Getters
+         */
+        Object.defineProperties(self, {
+         /* 
+          * Adds a busy prop to the controller that evaluates to true 
+          * when the table's state should be locked, preventing modification 
+          * to the columnHeads and rowStubs.
+          */
+          busy: {
+            get: function() {
+              return $scope.xeditableFormActive;
+            }
+          },
+
+          columnHeads: {
+            get: function() {
+              // TODO: Check self.busy
+              return columnHeads;
+            }
+          },
+
+          rowStubs: {
+            get: function() {
+              // TODO: Check self.busy
+              return rowStubs;
+            }
+          }
+        });
         
         /**
          * An array of cell objects.
@@ -149,7 +181,7 @@ SOFTWARE.
          */
         self.cells = [];
         
-        // Protected properties - properties are not published onto parent scope
+        // @Protected properties (not published on parent scope)
         
         /**
          * The model used by the template for rendering the table.
@@ -157,7 +189,8 @@ SOFTWARE.
          */
         $scope.tableModel = [];
         
-        // Public methods
+        // @Public methods
+
         self.initFromCells = initFromCells;
         self.addColumn = addColumn;
         self.removeColumn = removeColumn;
@@ -328,15 +361,6 @@ SOFTWARE.
         scope.fillRight = fillRight.bind(scope);
         scope.appendTo = appendTo.bind(scope);
         scope.getColumnForm = getColumnForm.bind(scope);
-        
-        // Adds a busy prop to the controller that evaluates to true 
-        // when the table's state should be locked, preventing modification 
-        // to the columnHeads and rowStubs.
-        Object.defineProperty(scope.mt, 'busy', {
-          get: function() {
-            return scope.xeditableFormActive;
-          }
-        });
 
         scope.startWatching();
   
