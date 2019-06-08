@@ -172,7 +172,7 @@ SOFTWARE.
          * triggering watch expressions to add the corresponding cells.
          */
         function addColumn(columnHead) {
-          if (self.columnHeads.indexOf(columnHead) === -1)
+          if (self.columnHeads.indexOf(columnHead) === -1 && !self.busy)
             self.columnHeads.push(columnHead);
         }
         
@@ -181,7 +181,8 @@ SOFTWARE.
          * and removes cells.
          */
         function removeColumn(index) {
-          self.columnHeads.splice(index, 1);
+          if (!self.busy)
+            self.columnHeads.splice(index, 1);
         }
         
         /**
@@ -189,7 +190,7 @@ SOFTWARE.
          * trigger watch expressions to add new cells.
          */
         function addRow(rowStub) {
-          if (self.rowStubs.indexOf(rowStub) === -1)
+          if (self.rowStubs.indexOf(rowStub) === -1 && !self.busy)
             self.rowStubs.push(rowStub);
         }
         
@@ -199,7 +200,8 @@ SOFTWARE.
          * the corresponding row.
          */
         function removeRow(index) {
-          self.rowStubs.splice(index, 1);
+          if (!self.busy)
+            self.rowStubs.splice(index, 1);
         }
   
         /**
