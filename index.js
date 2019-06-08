@@ -20,6 +20,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+'use strict';
+
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['angular'], factory);
@@ -312,7 +314,6 @@ SOFTWARE.
         }
       }
       
-      
       /**
        * The Zelda function
        */
@@ -326,6 +327,15 @@ SOFTWARE.
         scope.appendTo = appendTo.bind(scope);
         scope.getColumnForm = getColumnForm.bind(scope);
         
+        // Adds a busy prop to the controller that evaluates to true 
+        // when the table's state should be locked, preventing modification 
+        // to the columnHeads and rowStubs.
+        Object.defineProperty(scope.mt, 'busy', {
+          get: function() {
+            return scope.xeditableFormActive;
+          }
+        });
+
         scope.startWatching();
   
         function startWatching() {
@@ -354,12 +364,10 @@ SOFTWARE.
           }
           // If strings are added to the columnHead or rowStub array..
           if (newLength > oldLength) {
-            console.log('Cells added');
             self.mt.addCells();
           }
           // .. removed
           else if (newLength < oldLength) {
-            console.log('Cells removed');
             self.mt.removeCells();
           }
           self.mt.render();
