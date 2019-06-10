@@ -123,19 +123,7 @@ SOFTWARE.
       }
       
       function controller($scope, $attrs) {
-        var self = $attrs.name ? $scope.$parent[$attrs.name] = this : this,
-        
-        // @Private properties
-
-        /**
-         * An array of strings that define the column heads.
-         */
-        columnHeads = [],
-
-        /**
-         * An array of strings that define the row stubs.
-         */
-        rowStubs = [];
+        var self = $attrs.name ? $scope.$parent[$attrs.name] = this : this;
 
         // @Public properties
 
@@ -152,22 +140,18 @@ SOFTWARE.
             get: function() {
               return $scope.xeditableFormActive;
             }
-          },
-
-          columnHeads: {
-            get: function() {
-              // TODO: Check self.busy
-              return columnHeads;
-            }
-          },
-
-          rowStubs: {
-            get: function() {
-              // TODO: Check self.busy
-              return rowStubs;
-            }
           }
         });
+
+        /**
+         * An array of strings that define the column heads.
+         */
+        self.columnHeads = [];
+
+        /**
+         * An array of strings that define the row stubs.
+         */
+        self.rowStubs = [];
         
         /**
          * An array of cell objects.
