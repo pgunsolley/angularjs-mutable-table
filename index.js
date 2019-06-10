@@ -69,7 +69,7 @@ SOFTWARE.
       // A template literal would be preferred, however at the time of writing this, 
       // my company's build pipeline didn't support some modern JS features :3 
       let template = 
-          '<table class="table">' +
+          '<table class="{{tableClass}}" id="{{tableId}}">' +
             '<thead>' +
               '<tr>' +
                 '<th>{{mt.rowsHeader}}</th>' +
@@ -352,7 +352,7 @@ SOFTWARE.
       /**
        * The Zelda function
        */
-      function link(scope) {
+      function link(scope, _, attrs) {
         scope.xeditableFormActive = false;
         scope.xeditableFormToggle = xeditableFormToggle.bind(scope);
         scope.startWatching = startWatching.bind(scope);
@@ -361,6 +361,10 @@ SOFTWARE.
         scope.fillRight = fillRight.bind(scope);
         scope.appendTo = appendTo.bind(scope);
         scope.getColumnForm = getColumnForm.bind(scope);
+
+        // Attach class, id, etc from attributes
+        scope.tableClass = attrs.class || "";
+        scope.tableId = attrs.id || "";
 
         scope.startWatching();
   
