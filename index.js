@@ -127,8 +127,6 @@ SOFTWARE.
 
         // @Public properties
 
-        self.name = $attrs.name;
-
         /**
          * Getters
          */
