@@ -10,7 +10,5 @@
   "author": "Patrick Gunsolley",
   "license": "MIT",
   "peerDependencies": {
-    "angular": "^1.4.0",
-    "angular-xeditable": "^0.1.9"
   }
 }
