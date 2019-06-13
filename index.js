@@ -96,14 +96,14 @@ SOFTWARE.
                   '<td ng-repeat="cell in rowObj.cells">' +
                     '<div id="editable-cells">' +
                       '<span>{{cell.value}}</span>' +  
-                      '<div ng-show="rowForm.$visible" editable-text="cell.value" e-form="rowForm" e-name="{{appendTo(\'row\', $index)}}">' + 
+                      '<div ng-if="rowForm.$visible" editable-text="cell.value" e-form="rowForm" e-name="{{appendTo(\'row\', $index)}}">' + 
                         '<span ng-if="rowForm.$visible">' +
                           '<button ng-if="$index > 0" ng-click="fillLeft($index, rowForm)">Fill Left</button>' +
                           '<button ng-if="$index < rowObj.cells.length - 1" ng-click="fillRight($index, rowForm)">Fill Right</button>' +
                         '</span>' +
                       '</div>' +
                       '<div ng-if="getColumnForm(\'columnForm\' + $index).$visible" editable-text="cell.value" e-form="getColumnForm(\'columnForm\' + $index)" e-name="{{appendTo(\'column\', $index)}}">' +
-                        '<span ng-show="getColumnForm(\'columnForm\' + $index).$visible">' + 
+                        '<span ng-if="getColumnForm(\'columnForm\' + $index).$visible">' + 
                           '<button ng-if="tableModel.indexOf(rowObj) > 0" ng-click="fillLeft(tableModel.indexOf(rowObj), getColumnForm(\'columnForm\' + $index))">Fill Up</button>' +
                           '<button ng-if="tableModel.indexOf(rowObj) < tableModel.length - 1" ng-click="fillRight(tableModel.indexOf(rowObj), getColumnForm(\'columnForm\' + $index))">Fill Down</button>' +
                         '</span>' +
