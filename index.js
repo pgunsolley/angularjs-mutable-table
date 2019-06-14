@@ -75,11 +75,11 @@ SOFTWARE.
                 '<th>{{mt.rowsHeader}}</th>' +
                   '<th ng-repeat="columnHead in mt.columnHeads">' +
                     '<form editable-form mt-p2p-form mt-p2p-namespace="columnForms" name="{{appendTo(\'columnForm\', $index)}}" ng-show="getColumnForm(\'columnForm\' + $index).$visible">' +
-                      '<button type="submit" ng-click="xeditableFormToggle()" ng-disabled="getColumnForm(\'columnForm\' + $index).$waiting" ng-show="getColumnForm(\'columnForm\' + $index).$visible">Save</button>' +
-                      '<button type="button" ng-disabled="getColumnForm(\'columnForm\' + $index).$waiting" ng-show="getColumnForm(\'columnForm\' + $index).$visible" ng-click="getColumnForm(\'columnForm\' + $index).$cancel(); xeditableFormToggle()">Cancel</button>' +
-                      '<button type="button" ng-click="xeditableFormToggle(); getColumnForm(\'columnForm\' + $index).$cancel();  mt.removeColumn($index);" ng-show="getColumnForm(\'columnForm\' + $index).$visible">Remove</button>' +
+                      '<button type="submit" class="{{saveBtnClass}}" ng-click="xeditableFormToggle()" ng-disabled="getColumnForm(\'columnForm\' + $index).$waiting" ng-show="getColumnForm(\'columnForm\' + $index).$visible">Save</button>' +
+                      '<button type="button" class="{{cancelBtnClass}}" ng-disabled="getColumnForm(\'columnForm\' + $index).$waiting" ng-show="getColumnForm(\'columnForm\' + $index).$visible" ng-click="getColumnForm(\'columnForm\' + $index).$cancel(); xeditableFormToggle()">Cancel</button>' +
+                      '<button type="button" class="{{removeBtnClass}}" ng-click="xeditableFormToggle(); getColumnForm(\'columnForm\' + $index).$cancel();  mt.removeColumn($index);" ng-show="getColumnForm(\'columnForm\' + $index).$visible">Remove</button>' +
                     '</form>' +
-                    '<button ng-disabled="xeditableFormActive" ng-hide="getColumnForm(\'columnForm\' + $index).$visible" ng-click="getColumnForm(\'columnForm\' + $index).$show(); xeditableFormToggle()">Edit</button>{{columnHead}}' + 
+                    '<button type="button" class="{{editBtnClass}}" ng-disabled="xeditableFormActive" ng-hide="getColumnForm(\'columnForm\' + $index).$visible" ng-click="getColumnForm(\'columnForm\' + $index).$show(); xeditableFormToggle()">Edit</button>{{columnHead}}' + 
                   '</th>' +
               '</tr>' +
             '</thead>' +
@@ -87,22 +87,22 @@ SOFTWARE.
                 '<tr ng-repeat="rowObj in tableModel">' +
                   '<td>' +
                     '<form editable-form mt-p2p-form mt-p2p-namespace="rowForms" name="rowForm" ng-show="rowForm.$visible">' +
-                      '<button ng-click="xeditableFormToggle()" type="submit" ng-disabled="rowForm.$waiting" ng-show="rowForm.$visible">Save</button>' +
-                      '<button type="button" ng-disabled="rowForm.$waiting" ng-show="rowForm.$visible" ng-click="rowForm.$cancel(); xeditableFormToggle()">Cancel</button>' +
-                      '<button type="button" ng-click="xeditableFormToggle(); rowForm.$cancel();  mt.removeRow($index);" ng-show="rowForm.$visible">Remove</button>' + 
+                      '<button type="submit" class="{{saveBtnClass}}" ng-disabled="rowForm.$waiting" ng-show="rowForm.$visible" ng-click="xeditableFormToggle()">Save</button>' +
+                      '<button type="button" class="{{cancelBtnClass}}" ng-disabled="rowForm.$waiting" ng-show="rowForm.$visible" ng-click="rowForm.$cancel(); xeditableFormToggle()">Cancel</button>' +
+                      '<button type="button" class="{{removeBtnClass}}" ng-show="rowForm.$visible" ng-click="xeditableFormToggle(); rowForm.$cancel(); mt.removeRow($index);">Remove</button>' + 
                     '</form>' +
-                    '<button ng-disabled="xeditableFormActive" ng-click="xeditableFormToggle(); rowForm.$show()" ng-show="!rowForm.$visible">Edit</button>{{rowObj.rowStub}}' +
+                    '<button type="button" class="{{editBtnClass}}" ng-disabled="xeditableFormActive" ng-click="xeditableFormToggle(); rowForm.$show()" ng-show="!rowForm.$visible">Edit</button>{{rowObj.rowStub}}' +
                   '</td>' +
                   '<td ng-repeat="cell in rowObj.cells">' +
                     '<div id="editable-cells">' +
                       '<span>{{cell.value}}</span>' +  
                       '<div ng-show="rowForm.$visible" editable-text="cell.value" e-form="rowForm" e-name="{{appendTo(\'row\', $index)}}">' + 
-                        '<button ng-show="$index > 0" ng-click="fillLeft($index, rowForm)">Fill Left</button>' +
-                        '<button ng-show="$index < rowObj.cells.length - 1" ng-click="fillRight($index, rowForm)">Fill Right</button>' +
+                        '<button type="button" class="{{fillBtnClass}}" ng-show="$index > 0" ng-click="fillLeft($index, rowForm)">Fill Left</button>' +
+                        '<button type="button" class="{{fillBtnClass}}" ng-show="$index < rowObj.cells.length - 1" ng-click="fillRight($index, rowForm)">Fill Right</button>' +
                       '</div>' +
                       '<div ng-show="getColumnForm(\'columnForm\' + $index).$visible" editable-text="cell.value" e-form="getColumnForm(\'columnForm\' + $index)" e-name="{{appendTo(\'column\', $index)}}">' +
-                        '<button ng-show="tableModel.indexOf(rowObj) > 0" ng-click="fillLeft(tableModel.indexOf(rowObj), getColumnForm(\'columnForm\' + $index))">Fill Up</button>' +
-                        '<button ng-show="tableModel.indexOf(rowObj) < tableModel.length - 1" ng-click="fillRight(tableModel.indexOf(rowObj), getColumnForm(\'columnForm\' + $index))">Fill Down</button>' +
+                        '<button type="button" class="{{fillBtnClass}}" ng-show="tableModel.indexOf(rowObj) > 0" ng-click="fillLeft(tableModel.indexOf(rowObj), getColumnForm(\'columnForm\' + $index))">Fill Up</button>' +
+                        '<button type="button" class="{{fillBtnClass}}" ng-show="tableModel.indexOf(rowObj) < tableModel.length - 1" ng-click="fillRight(tableModel.indexOf(rowObj), getColumnForm(\'columnForm\' + $index))">Fill Down</button>' +
                       '</div>' +
                     '</div>' +
                   '</td>' +
@@ -330,7 +330,15 @@ SOFTWARE.
       }
       
       /**
-       * The Zelda function
+       * Directive takes the following attributes, which are passed to underlying elements: 
+       * 
+       * mt-table-class="value" is passed as the class for the <table> element
+       * mt-table-id="value" is passed as the id for the <table> element
+       * mt-edit-btn-class="value" is passed as the class for all edit <button> elements
+       * mt-save-btn-class="value" is passed as the class for all save <button> elements
+       * mt-cancel-btn-class="value" is passed as the class for all cancel <button> elements
+       * mt-remove-btn-class="value" is passed as the class for all remove <button> elements
+       * mt-fill-btn-class="value" is passed as the class for all the fill<left|right|up|down> <button> elements
        */
       function link(scope, _, attrs) {
         scope.xeditableFormActive = false;
@@ -342,9 +350,14 @@ SOFTWARE.
         scope.appendTo = appendTo.bind(scope);
         scope.getColumnForm = getColumnForm.bind(scope);
 
-        // Attach class, id, etc from attributes
-        scope.tableClass = attrs.class || "";
-        scope.tableId = attrs.id || "";
+        // Bind attributes to scope
+        scope.tableClass = attrs.mtTableClass || "";
+        scope.tableId = attrs.mtTableId || "";
+        scope.editBtnClass = attrs.mtEditBtnClass || "";
+        scope.saveBtnClass = attrs.mtSaveBtnClass || "";
+        scope.cancelBtnClass = attrs.mtCancelBtnClass || "";
+        scope.removeBtnClass = attrs.mtRemoveBtnClass || "";
+        scope.fillBtnClass = attrs.mtFillBtnClass || "";
 
         scope.startWatching();
   
