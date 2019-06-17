@@ -329,9 +329,11 @@ SOFTWARE.
         function showEditableForm(targetNs) {
           return function(i) {
             $timeout(function() {
-              // Close all other tables first.
-              $scope[targetNs].forEach(function(form) {
-                form.$cancel();
+              // Close all other editable forms first.
+              [$scope.rowForms, $scope.columnForms].forEach(function(forms) {
+                forms.forEach(function(form) {
+                  form.$cancel();
+                });
               });
               // Show target table
               $scope[targetNs][i].$show();
