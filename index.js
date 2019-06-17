@@ -96,11 +96,11 @@ SOFTWARE.
                 '<td ng-repeat="cell in rowObj.cells">' +
                   '<span ng-show="!rowForm.$visible">{{cell.value}}</span>' + 
                   '<span ng-show="rowForm.$visible" editable-text="cell.value" e-form="rowForm" e-name="{{appendTo(\'row\', $index)}}">{{cell.value}}</span>' + 
-                  '<button ng-show="rowForm.$visible && rowObj.cells.indexOf(cell) > 0" type="button" class="{{fillBtnClass}}" ng-show="$index > 0" ng-click="fillLeft($index, rowForm)">Fill Left</button>' +
-                  '<button ng-show="rowForm.$visible && rowObj.cells.indexOf(cell) < rowObj.cells.length - 1" type="button" class="{{fillBtnClass}}" ng-show="$index < rowObj.cells.length - 1" ng-click="fillRight($index, rowForm)">Fill Right</button>' +
+                  '<button ng-show="rowForm.$visible" type="button" class="{{fillBtnClass}}" ng-show="$index > 0" ng-click="fillLeft($index, rowForm)">Fill Left</button>' +
+                  '<button ng-show="rowForm.$visible" type="button" class="{{fillBtnClass}}" ng-show="$index < rowObj.cells.length - 1" ng-click="fillRight($index, rowForm)">Fill Right</button>' +
                   '<span ng-show="getColumnForm(\'columnForm\' + $index).$visible" editable-text="cell.value" e-form="getColumnForm(\'columnForm\' + $index)" e-name="{{appendTo(\'column\', $index)}}">{{cell.value}}</span>' +
-                  '<button type="button" ng-show="getColumnForm(\'columnForm\' + $index).$visible && rowObj.cells.indexOf(cell) > 0" class="{{fillBtnClass}}" ng-show="tableModel.indexOf(rowObj) > 0" ng-click="fillLeft(tableModel.indexOf(rowObj), getColumnForm(\'columnForm\' + $index))">Fill Up</button>' +
-                  '<button type="button" ng-show="getColumnForm(\'columnForm\' + $index).$visible && rowObj.cells.indexOf(cell) < rowObj.cells.length - 1" class="{{fillBtnClass}}" ng-show="tableModel.indexOf(rowObj) < tableModel.length - 1" ng-click="fillRight(tableModel.indexOf(rowObj), getColumnForm(\'columnForm\' + $index))">Fill Down</button>' +
+                  '<button type="button" ng-show="getColumnForm(\'columnForm\' + $index).$visible" class="{{fillBtnClass}}" ng-show="tableModel.indexOf(rowObj) > 0" ng-click="fillLeft(tableModel.indexOf(rowObj), getColumnForm(\'columnForm\' + $index))">Fill Up</button>' +
+                  '<button type="button" ng-show="getColumnForm(\'columnForm\' + $index).$visible" class="{{fillBtnClass}}" ng-show="tableModel.indexOf(rowObj) < tableModel.length - 1" ng-click="fillRight(tableModel.indexOf(rowObj), getColumnForm(\'columnForm\' + $index))">Fill Down</button>' +
                 '</td>' +
               '</tr>' +
             '</tbody>' +
