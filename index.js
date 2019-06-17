@@ -183,7 +183,12 @@ SOFTWARE.
          * triggering watch expressions to add the corresponding cells.
          */
         function addColumn(columnHead) {
-          if (self.columnHeads.indexOf(columnHead) === -1 && !self.busy)
+          if (self.columnHeads.indexOf(columnHead) > -1)
+            console.warn('Column head of ' + columnHead + ' already exists.');
+          else if (self.busy) {
+            console.warn('Table is busy; unable to add column.');
+          }
+          else 
             self.columnHeads.push(columnHead);
         }
         
@@ -192,7 +197,9 @@ SOFTWARE.
          * and removes cells.
          */
         function removeColumn(index) {
-          if (!self.busy)
+          if (self.busy)
+            console.warn('Table is busy; unable to remove column.');
+          else
             self.columnHeads.splice(index, 1);
         }
         
@@ -201,8 +208,12 @@ SOFTWARE.
          * trigger watch expressions to add new cells.
          */
         function addRow(rowStub) {
-          if (self.rowStubs.indexOf(rowStub) === -1 && !self.busy)
-            self.rowStubs.push(rowStub);
+          if (self.rowStubs.indexOf(rowStub) > -1)
+            console.warn('Row stub of ' + rowStub + ' already exists.');
+          else if (self.busy) 
+            console.warn('Table is busy; unable to add row.');
+          else 
+            console.warn('Table is currently in the busy state; unable to add row.')
         }
         
         /**
@@ -211,7 +222,9 @@ SOFTWARE.
          * the corresponding row.
          */
         function removeRow(index) {
-          if (!self.busy)
+          if (self.busy)
+            console.warn('Table is busy; unable to remove row.');
+          else
             self.rowStubs.splice(index, 1);
         }
   
