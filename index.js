@@ -96,11 +96,11 @@ SOFTWARE.
                 '<td ng-repeat="cell in rowObj.cells">' +
                   '<span ng-show="!rowForm.$visible">{{cell.value}}</span>' + 
                   '<span ng-show="rowForm.$visible" editable-text="cell.value" e-form="rowForm" e-name="{{appendTo(\'row\', $index)}}">{{cell.value}}</span>' + 
-                  '<button ng-show="rowForm.$visible && $index > 0" type="button" class="{{fillBtnClass}}" ng-click="fillLeft($index, rowForm)">Fill Left</button>' +
-                  '<button ng-show="rowForm.$visible && $index < rowObj.cells.length - 1" type="button" class="{{fillBtnClass}}" ng-click="fillRight($index, rowForm)">Fill Right</button>' +
+                  '<button ng-show="rowForm.$visible && $index > 0" type="button" class="{{fillBtnClass}}" ng-click="fillLeft($index, rowForm)">&#21E6</button>' +
+                  '<button ng-show="rowForm.$visible && $index < rowObj.cells.length - 1" type="button" class="{{fillBtnClass}}" ng-click="fillRight($index, rowForm)">&#21E8</button>' +
                   '<span ng-show="getColumnForm(\'columnForm\' + $index).$visible" editable-text="cell.value" e-form="getColumnForm(\'columnForm\' + $index)" e-name="{{appendTo(\'column\', $index)}}">{{cell.value}}</span>' +
-                  '<button type="button" ng-show="getColumnForm(\'columnForm\' + $index).$visible && tableModel.indexOf(rowObj) > 0" class="{{fillBtnClass}}" ng-click="fillLeft(tableModel.indexOf(rowObj), getColumnForm(\'columnForm\' + $index))">Fill Up</button>' +
-                  '<button type="button" ng-show="getColumnForm(\'columnForm\' + $index).$visible && tableModel.indexOf(rowObj) < tableModel.length - 1" class="{{fillBtnClass}}" ng-click="fillRight(tableModel.indexOf(rowObj), getColumnForm(\'columnForm\' + $index))">Fill Down</button>' +
+                  '<button type="button" ng-show="getColumnForm(\'columnForm\' + $index).$visible && tableModel.indexOf(rowObj) > 0" class="{{fillBtnClass}}" ng-click="fillLeft(tableModel.indexOf(rowObj), getColumnForm(\'columnForm\' + $index))">&#21E7</button>' +
+                  '<button type="button" ng-show="getColumnForm(\'columnForm\' + $index).$visible && tableModel.indexOf(rowObj) < tableModel.length - 1" class="{{fillBtnClass}}" ng-click="fillRight(tableModel.indexOf(rowObj), getColumnForm(\'columnForm\' + $index))">&#21E9</button>' +
                 '</td>' +
               '</tr>' +
             '</tbody>' +
@@ -175,7 +175,9 @@ SOFTWARE.
         self.addCells = addCells;
         self.removeCells = removeCells;
         self.render = render;
-                
+        self.showColumnEditableForm = showEditableForm('columnForms');
+        self.showRowEditableForm = showEditableForm('rowForms');
+
         /**
          * Add a column head string to the columnHeads array, 
          * triggering watch expressions to add the corresponding cells.
@@ -322,6 +324,13 @@ SOFTWARE.
           });
           self.render();
           $scope.startWatching();
+        }
+
+        function showEditableForm(targetNs) {
+          return function(i) {
+            $scope[targetNs][i].$show();
+            $scope.xeditableFormToggle();
+          }
         }
       }
       
