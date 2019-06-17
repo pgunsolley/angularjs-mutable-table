@@ -330,7 +330,7 @@ SOFTWARE.
           return function(i) {
             $timeout(function() {
               $scope[targetNs][i].$show();
-              $scope.xeditableFormToggle();
+              $scope.xeditableFormActive = true;
             });
           }
         }
