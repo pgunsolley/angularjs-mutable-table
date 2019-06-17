@@ -91,7 +91,7 @@ SOFTWARE.
                       '<button type="button" class="{{cancelBtnClass}}" ng-disabled="rowForm.$waiting" ng-show="rowForm.$visible" ng-click="rowForm.$cancel(); xeditableFormToggle()">Cancel</button>' +
                       '<button type="button" class="{{removeBtnClass}}" ng-show="rowForm.$visible" ng-click="xeditableFormToggle(); rowForm.$cancel(); mt.removeRow($index);">Remove</button>' + 
                     '</form>' +
-                    '<button type="button" class="{{editBtnClass}}" ng-hide="xeditableFormActive" ng-click="xeditableFormToggle(); rowForm.$show()" ng-show="!rowForm.$visible">Edit</button>{{rowObj.rowStub}}' +
+                    '<button type="button" class="{{editBtnClass}}" ng-hide="xeditableFormActive" ng-click="xeditableFormToggle(); rowForm.$show()" ng-show="!rowForm.$visible">Edit</button>&nbsp;<b>{{rowObj.rowStub}}</b>' +
                   '</td>' +
                   '<td ng-repeat="cell in rowObj.cells">' +
                     '<div id="editable-cells">' +
