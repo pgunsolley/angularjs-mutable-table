@@ -339,6 +339,7 @@ SOFTWARE.
        * mt-cancel-btn-class="value" is passed as the class for all cancel <button> elements
        * mt-remove-btn-class="value" is passed as the class for all remove <button> elements
        * mt-fill-btn-class="value" is passed as the class for all the fill<left|right|up|down> <button> elements
+       * mt-btn-class="value" will set the class for all buttons, overriding all other attribute values.
        */
       function link(scope, _, attrs) {
         scope.xeditableFormActive = false;
@@ -353,11 +354,11 @@ SOFTWARE.
         // Bind attributes to scope
         scope.tableClass = attrs.mtTableClass || "";
         scope.tableId = attrs.mtTableId || "";
-        scope.editBtnClass = attrs.mtEditBtnClass || "";
-        scope.saveBtnClass = attrs.mtSaveBtnClass || "";
-        scope.cancelBtnClass = attrs.mtCancelBtnClass || "";
-        scope.removeBtnClass = attrs.mtRemoveBtnClass || "";
-        scope.fillBtnClass = attrs.mtFillBtnClass || "";
+        scope.editBtnClass = attrs.mtBtnClass || attrs.mtEditBtnClass || "";
+        scope.saveBtnClass = attrs.mtBtnClass || attrs.mtSaveBtnClass || "";
+        scope.cancelBtnClass = attrs.mtBtnClass || attrs.mtCancelBtnClass || "";
+        scope.removeBtnClass = attrs.mtBtnClass || attrs.mtRemoveBtnClass || "";
+        scope.fillBtnClass = attrs.mtBtnClass || attrs.mtFillBtnClass || "";
 
         scope.startWatching();
   
