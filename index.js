@@ -242,7 +242,7 @@ SOFTWARE.
                 cells.push({
                   columnHead: columnHeads[c],
                   rowStub: rowStubs[r],
-                  value: '-'
+                  value: ''
                 });
               }
             }
