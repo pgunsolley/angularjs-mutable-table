@@ -94,6 +94,7 @@ SOFTWARE.
                   '<button type="button" class="{{editBtnClass}}" ng-hide="xeditableFormActive" ng-click="xeditableFormToggle(); rowForm.$show()" ng-show="!rowForm.$visible">Edit</button>&nbsp;<b>{{rowObj.rowStub}}</b>' +
                 '</td>' +
                 '<td ng-repeat="cell in rowObj.cells">' +
+                  '<span ng-show="!rowForm.$visible">{{cell.value}}</span>' + 
                   '<span ng-show="rowForm.$visible" editable-text="cell.value" e-form="rowForm" e-name="{{appendTo(\'row\', $index)}}">{{cell.value}}</span>' + 
                   '<button ng-show="rowForm.$visible" type="button" class="{{fillBtnClass}}" ng-show="$index > 0" ng-click="fillLeft($index, rowForm)">Fill Left</button>' +
                   '<button ng-show="rowForm.$visible" type="button" class="{{fillBtnClass}}" ng-show="$index < rowObj.cells.length - 1" ng-click="fillRight($index, rowForm)">Fill Right</button>' +
