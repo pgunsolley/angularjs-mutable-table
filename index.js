@@ -213,7 +213,7 @@ SOFTWARE.
           else if (self.busy) 
             console.warn('Table is busy; unable to add row.');
           else 
-            console.warn('Table is currently in the busy state; unable to add row.')
+            self.rowStubs.push(rowStub);
         }
         
         /**
