@@ -388,6 +388,7 @@ SOFTWARE.
         scope.removeBtnClass = attrs.mtBtnClass || attrs.mtRemoveBtnClass || "";
         scope.fillBtnClass = attrs.mtBtnClass || attrs.mtFillBtnClass || "";
         scope.startWatching();
+        updateHideEdit();
 
         attrs.$observe('mtHideEdit', updateHideEdit);
   
