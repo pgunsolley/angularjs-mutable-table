@@ -468,9 +468,11 @@ SOFTWARE.
 
         // Method with obvious method name does obvious things.
         function closeAllForms() {
-          this.columnForms.concat(this.rowForms).forEach(function(form) {
-            form.$cancel();
-          });
+          if (this.columnForms) {
+            this.columnForms.concat(this.rowForms || []).forEach(function(form) {
+              form.$cancel();
+            });
+          }
         }
       }
       
