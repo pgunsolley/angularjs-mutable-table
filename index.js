@@ -413,6 +413,8 @@ SOFTWARE.
               newLength = newVal.length,
               oldLength = oldVal.length;
           
+          self.xeditableFormActive = false;
+
           // Values are the same. Either the model was sorted, 
           // or the table was just initialized.
           if (newVal === oldVal) {
