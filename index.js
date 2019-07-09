@@ -79,7 +79,7 @@ SOFTWARE.
                     '<button type="button" class="{{cancelBtnClass}}" ng-disabled="getColumnForm(\'columnForm\' + $index).$waiting" ng-show="getColumnForm(\'columnForm\' + $index).$visible" ng-click="getColumnForm(\'columnForm\' + $index).$cancel(); xeditableFormToggle()">Cancel</button>' +
                     '<button type="button" class="{{removeBtnClass}}" ng-click="xeditableFormToggle(); getColumnForm(\'columnForm\' + $index).$cancel();  mt.removeColumn($index);" ng-show="getColumnForm(\'columnForm\' + $index).$visible">Remove</button>' +
                   '</form>' +
-                  '<button ng-hide="disableEdit || disableEditColumns" type="button" class="{{editBtnClass}}" ng-hide="xeditableFormActive" ng-hide="getColumnForm(\'columnForm\' + $index).$visible" ng-click="getColumnForm(\'columnForm\' + $index).$show(); xeditableFormToggle()">Edit</button>{{columnHead}}' + 
+                  '<button ng-hide="disableEdit || disableEditColumns" type="button" class="{{editBtnClass}}" ng-hide="xeditableFormActive || getColumnForm(\'columnForm\' + $index).$visible" ng-click="getColumnForm(\'columnForm\' + $index).$show(); xeditableFormToggle()">Edit</button>{{columnHead}}' + 
                 '</th>' +
               '</tr>' +
             '</thead>' +
@@ -91,7 +91,7 @@ SOFTWARE.
                     '<button type="button" class="{{cancelBtnClass}}" ng-disabled="rowForm.$waiting" ng-show="rowForm.$visible" ng-click="rowForm.$cancel(); xeditableFormToggle()">Cancel</button>' +
                     '<button type="button" class="{{removeBtnClass}}" ng-show="rowForm.$visible" ng-click="xeditableFormToggle(); rowForm.$cancel(); mt.removeRow($index);">Remove</button>' + 
                   '</form>' +
-                  '<button ng-hide="disableEdit || disableEditRows" type="button" class="{{editBtnClass}}" ng-hide="xeditableFormActive" ng-click="xeditableFormToggle(); rowForm.$show()" ng-show="!rowForm.$visible">Edit</button>&nbsp;<b>{{rowObj.rowStub}}</b>' +
+                  '<button ng-hide="disableEdit || disableEditRows" type="button" class="{{editBtnClass}}" ng-click="xeditableFormToggle(); rowForm.$show()" ng-show="!xeditableFormActive && !rowForm.$visible">Edit</button>&nbsp;<b>{{rowObj.rowStub}}</b>' +
                 '</td>' +
                 '<td ng-repeat="cell in rowObj.cells">' +
                   '<span ng-show="!rowForm.$visible && !getColumnForm(\'columnForm\' + $index).$visible">{{cell.value}}</span>' + 
