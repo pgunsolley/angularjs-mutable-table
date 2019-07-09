@@ -380,6 +380,7 @@ SOFTWARE.
         scope.fillRight = fillRight.bind(scope);
         scope.appendTo = appendTo.bind(scope);
         scope.getColumnForm = getColumnForm.bind(scope);
+        scope.closeAllForms = closeAllForms.bind(scope);
 
         // Bind attributes to scope
         scope.tableClass = attrs.mtTableClass || "";
@@ -414,6 +415,7 @@ SOFTWARE.
               oldLength = oldVal.length;
           
           self.xeditableFormActive = false;
+          self.closeAllForms();
 
           // Values are the same. Either the model was sorted, 
           // or the table was just initialized.
@@ -462,6 +464,13 @@ SOFTWARE.
             }
           }
           //throw new Error('Unable to find column form: ' + formName);
+        }
+
+        // Method with obvious method name does obvious things.
+        function closeAllForms() {
+          this.columnForms.concat(this.rowForms).forEach(function(form) {
+            form.$cancel();
+          });
         }
       }
       
