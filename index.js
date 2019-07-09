@@ -79,7 +79,7 @@ SOFTWARE.
                     '<button type="button" class="{{cancelBtnClass}}" ng-disabled="getColumnForm(\'columnForm\' + $index).$waiting" ng-show="getColumnForm(\'columnForm\' + $index).$visible" ng-click="getColumnForm(\'columnForm\' + $index).$cancel(); xeditableFormToggle()">Cancel</button>' +
                     '<button type="button" class="{{removeBtnClass}}" ng-click="xeditableFormToggle(); getColumnForm(\'columnForm\' + $index).$cancel();  mt.removeColumn($index);" ng-show="getColumnForm(\'columnForm\' + $index).$visible">Remove</button>' +
                   '</form>' +
-                  '<button ng-hide="disableEdit || disableEditColumns" type="button" class="{{editBtnClass}}" ng-hide="xeditableFormActive || getColumnForm(\'columnForm\' + $index).$visible" ng-click="getColumnForm(\'columnForm\' + $index).$show(); xeditableFormToggle()">Edit</button>{{columnHead}}' + 
+                  '<button type="button" class="{{editBtnClass}}" ng-hide="xeditableFormActive || getColumnForm(\'columnForm\' + $index).$visible" ng-click="getColumnForm(\'columnForm\' + $index).$show(); xeditableFormToggle()">Edit</button>{{columnHead}}' + 
                 '</th>' +
               '</tr>' +
             '</thead>' +
