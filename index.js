@@ -20,6 +20,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+// TODO: Add ability to remove "REMOVE" buttons on columns, rows and both 
+// TODO: Add ability to transclude special directives into specific locations within the template
+// TODO: Maybe add a special property to each cell for custom data (like { meta: {} }))
+
 'use strict';
 
 (function(root, factory) {
@@ -77,7 +81,7 @@ SOFTWARE.
                   '<form editable-form mt-p2p-form mt-p2p-namespace="columnForms" name="{{appendTo(\'columnForm\', $index)}}" ng-show="getColumnForm(\'columnForm\' + $index).$visible">' +
                     '<button type="submit" class="{{saveBtnClass}}" ng-click="xeditableFormToggle()" ng-disabled="getColumnForm(\'columnForm\' + $index).$waiting" ng-show="getColumnForm(\'columnForm\' + $index).$visible">Save</button>' +
                     '<button type="button" class="{{cancelBtnClass}}" ng-disabled="getColumnForm(\'columnForm\' + $index).$waiting" ng-show="getColumnForm(\'columnForm\' + $index).$visible" ng-click="getColumnForm(\'columnForm\' + $index).$cancel(); xeditableFormToggle()">Cancel</button>' +
-                    '<button type="button" class="{{removeBtnClass}}" ng-click="xeditableFormToggle(); getColumnForm(\'columnForm\' + $index).$cancel();  mt.removeColumn($index);" ng-show="getColumnForm(\'columnForm\' + $index).$visible">Remove</button>' +
+                    '<button type="button" class="{{removeBtnClass}}" ng-click="xeditableFormToggle(); getColumnForm(\'columnForm\' + $index).$cancel();  mt.removeColumn($index);" ng-show="getColumnForm(\'columnForm\' + $index).$visible && !disableRemoveColumns && !disableRemove">Remove</button>' +
                   '</form>' +
                   '<button type="button" class="{{editBtnClass}}" ng-hide="disableEdit || disableEditColumns || xeditableFormActive || getColumnForm(\'columnForm\' + $index).$visible" ng-click="getColumnForm(\'columnForm\' + $index).$show(); xeditableFormToggle()">Edit</button>{{columnHead}}' + 
                 '</th>' +
@@ -89,7 +93,7 @@ SOFTWARE.
                   '<form editable-form mt-p2p-form mt-p2p-namespace="rowForms" name="rowForm" ng-show="rowForm.$visible">' +
                     '<button type="submit" class="{{saveBtnClass}}" ng-disabled="rowForm.$waiting" ng-show="rowForm.$visible" ng-click="xeditableFormToggle()">Save</button>' +
                     '<button type="button" class="{{cancelBtnClass}}" ng-disabled="rowForm.$waiting" ng-show="rowForm.$visible" ng-click="rowForm.$cancel(); xeditableFormToggle()">Cancel</button>' +
-                    '<button type="button" class="{{removeBtnClass}}" ng-show="rowForm.$visible" ng-click="xeditableFormToggle(); rowForm.$cancel(); mt.removeRow($index);">Remove</button>' + 
+                    '<button type="button" class="{{removeBtnClass}}" ng-show="rowForm.$visible && !disableRemoveRows && !disableRemove" ng-click="xeditableFormToggle(); rowForm.$cancel(); mt.removeRow($index);">Remove</button>' + 
                   '</form>' +
                   '<button ng-hide="disableEdit || disableEditRows" type="button" class="{{editBtnClass}}" ng-click="xeditableFormToggle(); rowForm.$show()" ng-show="!xeditableFormActive && !rowForm.$visible">Edit</button>&nbsp;<b>{{rowObj.rowStub}}</b>' +
                 '</td>' +
@@ -339,6 +343,12 @@ SOFTWARE.
           $scope.startWatching();
         }
 
+        // Higher order function. targetNS (forgot what Ns meant huehue)
+        // is a string representation of the namespace for the form type...
+        // If this doesn't make sense, check out the mtP2p directives and the 
+        // columnForms and rowForms properties on the $scope. They are arrays 
+        // assigned to properties on the $scope that act as a namespace for
+        // corresponding xeditable forms.
         function showEditableForm(targetNs) {
           return function(i) {
             $timeout(function() {
@@ -370,6 +380,9 @@ SOFTWARE.
        * mt-disable-edit will set the hideEdit scope prop, hiding or showing the edit buttons.
        * mt-disable-edit-columns disables column editing
        * mt-disable-edit-rows disables row editing
+       * mt-disable-remove-columns hides the "remove" buttons for column forms
+       * mt-disable-remove-rows hides the "remove" buttons for row forms
+       * mt-disable-remove hides the "remove" buttons for all row and column forms
        */
       function link(scope, _, attrs) {
         scope.xeditableFormActive = false;
@@ -392,7 +405,11 @@ SOFTWARE.
         scope.fillBtnClass = attrs.mtBtnClass || attrs.mtFillBtnClass || "";
         scope.disableEdit = attrs.mtDisableEdit ? true : false;
         scope.disableEditColumns = attrs.mtDisableEditColumns ? true : false;
-        scope.disableEditRows = attrs.mtDisabledEditRows ? true : false;
+        scope.disableEditRows = attrs.mtDisableEditRows ? true : false;
+        scope.disableRemoveColumns = attrs.mtDisableRemoveColumns ? true : false;
+        scope.disableRemoveRows = attrs.mtDisableRemoveRows ? true : false;
+        scope.disableRemove = attrs.mtDisableRemove ? true : false;
+
         scope.startWatching();
 
         function startWatching() {
