@@ -79,7 +79,7 @@ SOFTWARE.
                 '<th>{{mt.rowsHeader}}</th>' +
                 '<th ng-repeat="columnHead in mt.columnHeads">' +
                   '<form editable-form mt-p2p-form mt-p2p-namespace="columnForms" name="{{appendTo(\'columnForm\', $index)}}" ng-show="getColumnForm(\'columnForm\' + $index).$visible">' +
-                    '<button type="submit" class="{{saveBtnClass}}" ng-click="xeditableFormToggle()" ng-disabled="getColumnForm(\'columnForm\' + $index).$waiting" ng-show="getColumnForm(\'columnForm\' + $index).$visible">Save</button>' +
+                    '<button type="submit" class="{{saveBtnClass}}" ng-click="xeditableFormToggle(); mt.hooks.afterSave()" ng-disabled="getColumnForm(\'columnForm\' + $index).$waiting" ng-show="getColumnForm(\'columnForm\' + $index).$visible">Save</button>' +
                     '<button type="button" class="{{cancelBtnClass}}" ng-disabled="getColumnForm(\'columnForm\' + $index).$waiting" ng-show="getColumnForm(\'columnForm\' + $index).$visible" ng-click="getColumnForm(\'columnForm\' + $index).$cancel(); xeditableFormToggle()">Cancel</button>' +
                     '<button type="button" class="{{removeBtnClass}}" ng-click="xeditableFormToggle(); getColumnForm(\'columnForm\' + $index).$cancel();  mt.removeColumn($index);" ng-show="getColumnForm(\'columnForm\' + $index).$visible && !disableRemoveColumns && !disableRemove">Remove</button>' +
                   '</form>' +
@@ -91,7 +91,7 @@ SOFTWARE.
               '<tr ng-repeat="rowObj in tableModel">' +
                 '<td>' +
                   '<form editable-form mt-p2p-form mt-p2p-namespace="rowForms" name="rowForm" ng-show="rowForm.$visible">' +
-                    '<button type="submit" class="{{saveBtnClass}}" ng-disabled="rowForm.$waiting" ng-show="rowForm.$visible" ng-click="xeditableFormToggle()">Save</button>' +
+                    '<button type="submit" class="{{saveBtnClass}}" ng-disabled="rowForm.$waiting" ng-show="rowForm.$visible" ng-click="xeditableFormToggle(); mt.hooks.afterSave()">Save</button>' +
                     '<button type="button" class="{{cancelBtnClass}}" ng-disabled="rowForm.$waiting" ng-show="rowForm.$visible" ng-click="rowForm.$cancel(); xeditableFormToggle()">Cancel</button>' +
                     '<button type="button" class="{{removeBtnClass}}" ng-show="rowForm.$visible && !disableRemoveRows && !disableRemove" ng-click="xeditableFormToggle(); rowForm.$cancel(); mt.removeRow($index);">Remove</button>' + 
                   '</form>' +
@@ -119,7 +119,7 @@ SOFTWARE.
         template: template,
         transclude: true
       }
-      
+
       function controller($scope, $attrs, $timeout) {
         var self = $attrs.name ? $scope.$parent[$attrs.name] = this : this,
         
@@ -131,13 +131,21 @@ SOFTWARE.
          * great way to attach functionality to the mutable-table lifecycle whenever
          * the logic is simple and doesn't need evaluation against a scope.
          *
-         * Hooks are executed synchronously, and can return a boolean.
+         * Hooks are executed synchronously, and some can return a boolean.
          * If false is returned, the action dependent on the hook return value 
          * will not execute.
          */
         hooks = {
-          afterSave: function() { },
-          beforeRemove: function() { }
+          /**
+           * Return value is not evaluated.
+           * Executed after editable form data is saved to the cells.
+           */
+          afterSave: function() {},
+          /**
+           * Return value can be boolean.
+           * If false is returned, no changes will be made.
+           */
+          beforeRemove: function() {}
         };
 
         // @Public properties
@@ -244,7 +252,7 @@ SOFTWARE.
           else {
             // TODO: Make this dry; same code in removeRow.
             removeHookRes = hooks.beforeRemove(self.columnHeads[index]);
-            if (typeof removeHookRes !== 'boolean' || removeHookRes === true) {
+            if (removeHookRes !== false) {
               self.columnHeads.splice(index, 1);
             } 
             else {
@@ -278,7 +286,7 @@ SOFTWARE.
           else {
             // TODO: Make dry
             removeHookRes = hooks.beforeRemove(self.rowStubs[index]);
-            if (typeof removeHookRes !== 'boolean' || removeHookRes === true) {
+            if (removeHookRes !== false) {
               self.rowStubs.splice(index, 1);
             } 
             else {
