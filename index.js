@@ -121,7 +121,24 @@ SOFTWARE.
       }
       
       function controller($scope, $attrs, $timeout) {
-        var self = $attrs.name ? $scope.$parent[$attrs.name] = this : this;
+        var self = $attrs.name ? $scope.$parent[$attrs.name] = this : this,
+        
+        // @Private properties
+
+        /**
+         * Hooks can be registered using the 'setHook' method on the controller.
+         * I'm not a fan of the scope-cluttered event system in angularjs. Hooks are a 
+         * great way to attach functionality to the mutable-table lifecycle whenever
+         * the logic is simple and doesn't need evaluation against a scope.
+         *
+         * Hooks are executed synchronously, and can return a boolean.
+         * If false is returned, the action dependent on the hook return value 
+         * will not execute.
+         */
+        hooks = {
+          afterSave: function() { },
+          beforeRemove: function() { }
+        };
 
         // @Public properties
 
@@ -173,6 +190,8 @@ SOFTWARE.
         
         // @Public methods
 
+        self.setHook = setHook;
+        self.removeHook = removeHook;
         self.initFromCells = initFromCells;
         self.addColumn = addColumn;
         self.removeColumn = removeColumn;
@@ -183,6 +202,22 @@ SOFTWARE.
         self.render = render;
         self.showColumnEditableForm = showEditableForm('columnForms');
         self.showRowEditableForm = showEditableForm('rowForms');
+
+        function setHook(name, func) {
+          if (typeof func !== 'function') {
+            throw new Error('Hook must be typeof "function"');
+          }
+          if (!func[name]) {
+            throw new Error('Unknown hook ' + name);
+          }
+          hooks[name] = func;
+        }
+
+        function removeHook(name) {
+          if (hooks[name]) {
+            hooks[name] = function() {};
+          }
+        }
 
         /**
          * Add a column head string to the columnHeads array, 
@@ -203,10 +238,19 @@ SOFTWARE.
          * and removes cells.
          */
         function removeColumn(index) {
+          var removeHookRes;
           if (self.busy)
             console.warn('Table is busy; unable to remove column.');
-          else
-            self.columnHeads.splice(index, 1);
+          else {
+            // TODO: Make this dry; same code in removeRow.
+            removeHookRes = hooks.beforeRemove(self.columnHeads[index]);
+            if (typeof removeHookRes !== 'boolean' || removeHookRes === true) {
+              self.columnHeads.splice(index, 1);
+            } 
+            else {
+              console.log('Not removing column');
+            }
+          }
         }
         
         /**
@@ -228,10 +272,19 @@ SOFTWARE.
          * the corresponding row.
          */
         function removeRow(index) {
+          var removeHookRes;
           if (self.busy)
             console.warn('Table is busy; unable to remove row.');
-          else
-            self.rowStubs.splice(index, 1);
+          else {
+            // TODO: Make dry
+            removeHookRes = hooks.beforeRemove(self.rowStubs[index]);
+            if (typeof removeHookRes !== 'boolean' || removeHookRes === true) {
+              self.rowStubs.splice(index, 1);
+            } 
+            else {
+              console.log('Not removing column');
+            }
+          }
         }
   
         /**
