@@ -105,6 +105,7 @@ SOFTWARE.
                   '<span ng-show="getColumnForm(\'columnForm\' + $index).$visible" editable-text="cell.value" e-form="getColumnForm(\'columnForm\' + $index)" e-name="{{appendTo(\'column\', $index)}}">{{cell.value}}</span>' +
                   '<button type="button" ng-show="getColumnForm(\'columnForm\' + $index).$visible && tableModel.indexOf(rowObj) > 0" class="{{fillBtnClass}}" ng-click="fillLeft(tableModel.indexOf(rowObj), getColumnForm(\'columnForm\' + $index))">&#8593;</button>' +
                   '<button type="button" ng-show="getColumnForm(\'columnForm\' + $index).$visible && tableModel.indexOf(rowObj) < tableModel.length - 1" class="{{fillBtnClass}}" ng-click="fillRight(tableModel.indexOf(rowObj), getColumnForm(\'columnForm\' + $index))">&#8595;</button>' +
+                  '<div id="mt-transclude-cell-item" ng-show="getColumnForm(\'columnForm\' + $index).$visible || rowForm.$visible"></div>' +
                 '</td>' +
               '</tr>' +
             '</tbody>' +
@@ -115,7 +116,8 @@ SOFTWARE.
         scope: true,
         controllerAs: 'mt',
         link: link,
-        template: template
+        template: template,
+        transclude: true
       }
       
       function controller($scope, $attrs, $timeout) {
@@ -384,7 +386,10 @@ SOFTWARE.
        * mt-disable-remove-rows hides the "remove" buttons for row forms
        * mt-disable-remove hides the "remove" buttons for all row and column forms
        */
-      function link(scope, _, attrs) {
+      function link(scope, elem, attrs, ctrl, transclude) {
+        // An object/namespace for transcluded scopes.
+        var transcludedScope = {};
+
         scope.xeditableFormActive = false;
         scope.xeditableFormToggle = xeditableFormToggle.bind(scope);
         scope.startWatching = startWatching.bind(scope);
@@ -411,6 +416,16 @@ SOFTWARE.
         scope.disableRemove = attrs.mtDisableRemove ? true : false;
 
         scope.startWatching();
+
+        transclude(function(clone, scope) {
+          var cellItem;
+
+          cellItem = clone.detach('#mt-cell-item');
+          console.log(cellItem);
+          
+          // TODO: Insert the detached items to their respective locations 
+          
+        });
 
         function startWatching() {
           this.dereg = [
@@ -441,13 +456,13 @@ SOFTWARE.
           }
           // If strings are added to the columnHead or rowStub array..
           if (newLength > oldLength) {
-            self.mt.addCells();
+            ctrl.addCells();
           }
           // .. removed
           else if (newLength < oldLength) {
-            self.mt.removeCells();
+            ctrl.removeCells();
           }
-          self.mt.render();
+          ctrl.render();
         }
         
         // Set values on all xeditable elements to the right of the current 
