@@ -221,7 +221,7 @@ SOFTWARE.
           if (typeof func !== 'function') {
             throw new Error('Hook must be typeof "function"');
           }
-          if (!func[name]) {
+          if (!hooks[name]) {
             throw new Error('Unknown hook ' + name);
           }
           hooks[name] = function() { 
