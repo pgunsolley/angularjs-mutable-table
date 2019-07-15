@@ -163,6 +163,11 @@ SOFTWARE.
             get: function() {
               return $scope.xeditableFormActive;
             }
+          },
+          hooks: {
+            get: function() {
+              return hooks;
+            }
           }
         });
 
