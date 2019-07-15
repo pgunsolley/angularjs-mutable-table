@@ -211,6 +211,12 @@ SOFTWARE.
         self.showColumnEditableForm = showEditableForm('columnForms');
         self.showRowEditableForm = showEditableForm('rowForms');
 
+        /**
+         * Allow caller to set hook function by name.
+         * this is bound to the mutable-table controller.
+         * @param {*} name 
+         * @param {*} func 
+         */
         function setHook(name, func) {
           if (typeof func !== 'function') {
             throw new Error('Hook must be typeof "function"');
@@ -218,7 +224,9 @@ SOFTWARE.
           if (!func[name]) {
             throw new Error('Unknown hook ' + name);
           }
-          hooks[name] = func;
+          hooks[name] = function() { 
+            func.apply(self, Array.prototype.slice.call(arguments));
+          };
         }
 
         function removeHook(name) {
