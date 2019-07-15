@@ -230,7 +230,7 @@ SOFTWARE.
             throw new Error('Unknown hook ' + name);
           }
           hooks[name] = function() { 
-            func.apply(self, Array.prototype.slice.call(arguments));
+            return func.apply(self, Array.prototype.slice.call(arguments));
           };
         }
 
