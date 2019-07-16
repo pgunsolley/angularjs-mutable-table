@@ -80,7 +80,7 @@ SOFTWARE.
                 '<th ng-repeat="columnHead in mt.columnHeads">' +
                   '<form editable-form mt-p2p-form mt-p2p-namespace="columnForms" name="{{appendTo(\'columnForm\', $index)}}" ng-show="getColumnForm(\'columnForm\' + $index).$visible">' +
                     '<button type="submit" class="{{saveBtnClass}}" ng-click="xeditableFormToggle(); mt.hooks.afterSave()" ng-disabled="getColumnForm(\'columnForm\' + $index).$waiting" ng-show="getColumnForm(\'columnForm\' + $index).$visible">Save</button>' +
-                    '<button type="button" class="{{cancelBtnClass}}" ng-disabled="getColumnForm(\'columnForm\' + $index).$waiting" ng-show="getColumnForm(\'columnForm\' + $index).$visible" ng-click="getColumnForm(\'columnForm\' + $index).$cancel(); xeditableFormToggle()">Cancel</button>' +
+                    '<button type="button" class="{{cancelBtnClass}}" ng-disabled="getColumnForm(\'columnForm\' + $index).$waiting" ng-show="getColumnForm(\'columnForm\' + $index).$visible" ng-click="getColumnForm(\'columnForm\' + $index).$cancel(); xeditableFormToggle(); mt.hooks.afterCancel()">Cancel</button>' +
                     '<button type="button" class="{{removeBtnClass}}" ng-click="xeditableFormToggle(); getColumnForm(\'columnForm\' + $index).$cancel();  mt.removeColumn($index);" ng-show="getColumnForm(\'columnForm\' + $index).$visible && !disableRemoveColumns && !disableRemove">Remove</button>' +
                   '</form>' +
                   '<button type="button" class="{{editBtnClass}}" ng-hide="disableEdit || disableEditColumns || xeditableFormActive || getColumnForm(\'columnForm\' + $index).$visible" ng-click="getColumnForm(\'columnForm\' + $index).$show(); xeditableFormToggle()">Edit</button>{{columnHead}}' + 
@@ -92,7 +92,7 @@ SOFTWARE.
                 '<td>' +
                   '<form editable-form mt-p2p-form mt-p2p-namespace="rowForms" name="rowForm" ng-show="rowForm.$visible">' +
                     '<button type="submit" class="{{saveBtnClass}}" ng-disabled="rowForm.$waiting" ng-show="rowForm.$visible" ng-click="xeditableFormToggle(); mt.hooks.afterSave()">Save</button>' +
-                    '<button type="button" class="{{cancelBtnClass}}" ng-disabled="rowForm.$waiting" ng-show="rowForm.$visible" ng-click="rowForm.$cancel(); xeditableFormToggle()">Cancel</button>' +
+                    '<button type="button" class="{{cancelBtnClass}}" ng-disabled="rowForm.$waiting" ng-show="rowForm.$visible" ng-click="rowForm.$cancel(); xeditableFormToggle(); mt.hooks.afterCancel()">Cancel</button>' +
                     '<button type="button" class="{{removeBtnClass}}" ng-show="rowForm.$visible && !disableRemoveRows && !disableRemove" ng-click="xeditableFormToggle(); rowForm.$cancel(); mt.removeRow($index);">Remove</button>' + 
                   '</form>' +
                   '<button ng-hide="disableEdit || disableEditRows" type="button" class="{{editBtnClass}}" ng-click="xeditableFormToggle(); rowForm.$show()" ng-show="!xeditableFormActive && !rowForm.$visible">Edit</button>&nbsp;<b>{{rowObj.rowStub}}</b>' +
@@ -145,7 +145,9 @@ SOFTWARE.
            * Return value can be boolean.
            * If false is returned, no changes will be made.
            */
-          beforeRemove: function() {}
+          beforeRemove: function() {},
+
+          afterCancel: function() {}
         };
 
         // @Public properties
