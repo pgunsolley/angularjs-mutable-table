@@ -135,20 +135,9 @@ SOFTWARE.
          * If false is returned, the action dependent on the hook return value 
          * will not execute.
          */
-        hooks = {
-          /**
-           * Return value is not evaluated.
-           * Executed after editable form data is saved to the cells.
-           */
-          afterSave: function() {},
-          /**
-           * Return value can be boolean.
-           * If false is returned, no changes will be made.
-           */
-          beforeRemove: function() {},
-
-          afterCancel: function() {}
-        };
+        hooks; 
+        
+        initializeHooks();
 
         // @Public properties
 
@@ -207,6 +196,7 @@ SOFTWARE.
 
         self.setHook = setHook;
         self.removeHook = removeHook;
+        self.initializeHooks = initializeHooks;
         self.initFromCells = initFromCells;
         self.addColumn = addColumn;
         self.removeColumn = removeColumn;
@@ -240,6 +230,20 @@ SOFTWARE.
           if (hooks[name]) {
             hooks[name] = function() {};
           }
+        }
+
+        function initializeHooks() {
+          [
+            'afterSave',
+            'beforeRemove',
+            'afterCancel',
+            'afterAddColumn',
+            'afterRemoveColumn',
+            'afterAddRow',
+            'afterRemoveRow',
+          ].forEach(function(hookName) {
+            hooks[hookName] = function() {}
+          });
         }
 
         /**
@@ -532,10 +536,20 @@ SOFTWARE.
           }
           // If strings are added to the columnHead or rowStub array..
           if (newLength > oldLength) {
+            if (newVal === ctrl.columnHeads) {
+              ctrl.hooks.afterAddColumn(newVal);
+            } else {
+              ctrl.hooks.afterAddRow(newVal);
+            }
             ctrl.addCells();
           }
           // .. removed
           else if (newLength < oldLength) {
+            if (newVal === ctrl.columnHeads) {
+               ctrl.hooks.afterRemoveColumn(newVal);
+            } else {
+              ctrl.hooks.afterRemoveRow(newVal);
+            }
             ctrl.removeCells();
           }
           ctrl.render();
