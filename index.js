@@ -516,9 +516,6 @@ SOFTWARE.
         
         // Main handler for row or column changes.
         function rowStubOrColumnHeadChange(newVal, oldVal) {
-          // TODO: DELETE THIS; DEBUG 
-          console.log(self);
-
           let self = this,
               newLength = newVal.length,
               oldLength = oldVal.length;
