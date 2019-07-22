@@ -450,14 +450,14 @@ SOFTWARE.
 
         function generateColumnHeadPrefix(columnHead) {
           if (self.columnHeadPrefixGenerator) {
-            return self.columnHeadPrefixGenerator(columnHead);
+            return self.columnHeadPrefixGenerator(columnHead, self.columnHeads);
           }
           return "";
         }
 
         function generateRowStubPrefix(rowStub) {
           if (self.rowStubPrefixGenerator) {
-            return self.rowStubPrefixGenerator(rowStub);
+            return self.rowStubPrefixGenerator(rowStub, self.rowStubs);
           }
           return "";
         }
