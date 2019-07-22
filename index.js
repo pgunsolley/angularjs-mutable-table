@@ -451,12 +451,14 @@ SOFTWARE.
           if (self.columnHeadPrefixGenerator) {
             return self.columnHeadPrefixGenerator(columnHead);
           }
+          return "";
         }
 
         function generateRowStubPrefix(rowStub) {
           if (self.rowStubPrefixGenerator) {
             return self.rowStubPrefixGenerator(rowStub);
           }
+          return "";
         }
       }
       
