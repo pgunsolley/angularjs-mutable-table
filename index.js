@@ -68,8 +68,29 @@ SOFTWARE.
     }
   ])
 
+  .directive('mtEditedCopy', [
+    '$parse',
+    function mtEditedCopy($parse) {
+      var template = 'Edited Copy:&nbsp;<span>{{$copy}}</span>&nbsp;';
+      return {
+        restrict: 'AE',
+        scope: {
+          value: '=mtValue',
+          transform: '=mtTransform'
+        },
+        link: link,
+        template: template
+      };
+
+      function link(scope) {
+        $parse(scope.transform)(scope, { $original: scope.value });
+      }
+    }
+  ])
+
   .directive('mtMutableTable', [
-    function mtMutableTableFactory() {
+    '$parse',
+    function mtMutableTableFactory($parse) {
       // A template literal would be preferred, however at the time of writing this, 
       // my company's build pipeline didn't support some modern JS features :3 
       let template = 
@@ -83,7 +104,8 @@ SOFTWARE.
                     '<button type="button" class="{{cancelBtnClass}}" ng-disabled="getColumnForm(\'columnForm\' + $index).$waiting" ng-show="getColumnForm(\'columnForm\' + $index).$visible" ng-click="getColumnForm(\'columnForm\' + $index).$cancel(); xeditableFormToggle(); mt.hooks.afterCancel()">Cancel</button>' +
                     '<button type="button" class="{{removeBtnClass}}" ng-click="xeditableFormToggle(); getColumnForm(\'columnForm\' + $index).$cancel();  mt.removeColumn($index);" ng-show="getColumnForm(\'columnForm\' + $index).$visible && !disableRemoveColumns && !disableRemove">Remove</button>' +
                   '</form>' +
-                  '<button type="button" class="{{editBtnClass}}" ng-hide="disableEdit || disableEditColumns || xeditableFormActive || getColumnForm(\'columnForm\' + $index).$visible" ng-click="getColumnForm(\'columnForm\' + $index).$show(); xeditableFormToggle()">Edit</button>{{columnHead}}' + 
+                  '<button type="button" class="{{editBtnClass}}" ng-hide="disableEdit || disableEditColumns || xeditableFormActive || getColumnForm(\'columnForm\' + $index).$visible" ng-click="getColumnForm(\'columnForm\' + $index).$show(); xeditableFormToggle()">Edit</button>' + 
+                  '<mt-edited-copy mt-value="columnHead" mt-transform="columnHeadPrefixTransform" />{{columnHead}}' + 
                 '</th>' +
               '</tr>' +
             '</thead>' +
@@ -95,7 +117,8 @@ SOFTWARE.
                     '<button type="button" class="{{cancelBtnClass}}" ng-disabled="rowForm.$waiting" ng-show="rowForm.$visible" ng-click="rowForm.$cancel(); xeditableFormToggle(); mt.hooks.afterCancel()">Cancel</button>' +
                     '<button type="button" class="{{removeBtnClass}}" ng-show="rowForm.$visible && !disableRemoveRows && !disableRemove" ng-click="xeditableFormToggle(); rowForm.$cancel(); mt.removeRow($index);">Remove</button>' + 
                   '</form>' +
-                  '<button ng-hide="disableEdit || disableEditRows" type="button" class="{{editBtnClass}}" ng-click="xeditableFormToggle(); rowForm.$show()" ng-show="!xeditableFormActive && !rowForm.$visible">Edit</button>&nbsp;<b>{{rowObj.rowStub}}</b>' +
+                  '<button ng-hide="disableEdit || disableEditRows" type="button" class="{{editBtnClass}}" ng-click="xeditableFormToggle(); rowForm.$show()" ng-show="!xeditableFormActive && !rowForm.$visible">Edit</button>' + 
+                  '&nbsp;<mt-edited-copy mt-value="rowObj.rowStub" mt-transform="rowStubPrefixTransform" /><b>{{rowObj.rowStub}}</b>' +
                 '</td>' +
                 '<td ng-repeat="cell in rowObj.cells">' +
                   '<span ng-show="!rowForm.$visible && !getColumnForm(\'columnForm\' + $index).$visible">{{cell.value}}</span>' + 
@@ -444,24 +467,7 @@ SOFTWARE.
         }
       }
       
-      /**
-       * Directive takes the following attributes, which are passed to underlying elements: 
-       * 
-       * mt-table-class="value" is passed as the class for the <table> element
-       * mt-table-id="value" is passed as the id for the <table> element
-       * mt-edit-btn-class="value" is passed as the class for all edit <button> elements
-       * mt-save-btn-class="value" is passed as the class for all save <button> elements
-       * mt-cancel-btn-class="value" is passed as the class for all cancel <button> elements
-       * mt-remove-btn-class="value" is passed as the class for all remove <button> elements
-       * mt-fill-btn-class="value" is passed as the class for all the fill<left|right|up|down> <button> elements
-       * mt-btn-class="value" will set the class for all buttons, overriding all other attribute values.
-       * mt-disable-edit will set the hideEdit scope prop, hiding or showing the edit buttons.
-       * mt-disable-edit-columns disables column editing
-       * mt-disable-edit-rows disables row editing
-       * mt-disable-remove-columns hides the "remove" buttons for column forms
-       * mt-disable-remove-rows hides the "remove" buttons for row forms
-       * mt-disable-remove hides the "remove" buttons for all row and column forms
-       */
+      // Getting pretty big :/
       function link(scope, elem, attrs, ctrl, transclude) {
         // An object/namespace for transcluded scopes.
         var transcludedScope = {};
@@ -490,16 +496,14 @@ SOFTWARE.
         scope.disableRemoveColumns = attrs.mtDisableRemoveColumns ? true : false;
         scope.disableRemoveRows = attrs.mtDisableRemoveRows ? true : false;
         scope.disableRemove = attrs.mtDisableRemove ? true : false;
+        scope.columnHeadPrefixTransform = attrs.mtColumnHeadPrefixTransform || false;
+        scope.rowStubPrefixTransform = attrs.mtRowStubPrefixTransform || false;
 
         scope.startWatching();
 
+        // TODO: Break off the templates by directive?
         transclude(function(clone, scope) {
-          var cellItem;
-
-          cellItem = clone.detach('#mt-cell-item');
-          console.log(cellItem);
-          
-          // TODO: Insert the detached items to their respective locations 
+          // TODO: Check for directives
           
         });
 
