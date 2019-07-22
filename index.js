@@ -220,7 +220,8 @@ SOFTWARE.
         self.render = render;
         self.showColumnEditableForm = showEditableForm('columnForms');
         self.showRowEditableForm = showEditableForm('rowForms');
-        self.generateColumnPrefix = generateColumnPrefix;
+        self.generateColumnHeadPrefix = generateColumnHeadPrefix;
+        self.generateRowStubPrefix = generateRowStubPrefix;
 
         /**
          * Allow caller to set hook function by name.
