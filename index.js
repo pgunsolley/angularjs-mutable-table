@@ -68,26 +68,6 @@ SOFTWARE.
     }
   ])
 
-  .directive('mtEditedCopy', [
-    '$parse',
-    function mtEditedCopy($parse) {
-      var template = '<span>{{$copy}}</span>&nbsp;';
-      return {
-        restrict: 'AE',
-        scope: {
-          value: '=mtValue',
-          transform: '=mtTransform'
-        },
-        link: link,
-        template: template
-      };
-
-      function link(scope) {
-        $parse(scope.transform)(scope, { $original: scope.value });
-      }
-    }
-  ])
-
   .directive('mtMutableTable', [
     '$parse',
     function mtMutableTableFactory($parse) {
@@ -105,7 +85,7 @@ SOFTWARE.
                     '<button type="button" class="{{removeBtnClass}}" ng-click="xeditableFormToggle(); getColumnForm(\'columnForm\' + $index).$cancel();  mt.removeColumn($index);" ng-show="getColumnForm(\'columnForm\' + $index).$visible && !disableRemoveColumns && !disableRemove">Remove</button>' +
                   '</form>' +
                   '<button type="button" class="{{editBtnClass}}" ng-hide="disableEdit || disableEditColumns || xeditableFormActive || getColumnForm(\'columnForm\' + $index).$visible" ng-click="getColumnForm(\'columnForm\' + $index).$show(); xeditableFormToggle()">Edit</button>' + 
-                  '<mt-edited-copy mt-value="columnHead" mt-transform="columnHeadPrefixTransform" />{{columnHead}}' + 
+                  '{{mt.generateColumnHeadPrefix(columnHead) + "&nbsp;" + columnHead}}' + 
                 '</th>' +
               '</tr>' +
             '</thead>' +
@@ -118,7 +98,7 @@ SOFTWARE.
                     '<button type="button" class="{{removeBtnClass}}" ng-show="rowForm.$visible && !disableRemoveRows && !disableRemove" ng-click="xeditableFormToggle(); rowForm.$cancel(); mt.removeRow($index);">Remove</button>' + 
                   '</form>' +
                   '<button ng-hide="disableEdit || disableEditRows" type="button" class="{{editBtnClass}}" ng-click="xeditableFormToggle(); rowForm.$show()" ng-show="!xeditableFormActive && !rowForm.$visible">Edit</button>' + 
-                  '&nbsp;<mt-edited-copy mt-value="rowObj.rowStub" mt-transform="rowStubPrefixTransform" /><b>{{rowObj.rowStub}}</b>' +
+                  '&nbsp;<b>{{mt.generateRowStubPrefix(rowObj.rowStub) + "&nbsp;" + rowObj.rowStub}}</b>' +
                 '</td>' +
                 '<td ng-repeat="cell in rowObj.cells">' +
                   '<span ng-show="!rowForm.$visible && !getColumnForm(\'columnForm\' + $index).$visible">{{cell.value}}</span>' + 
@@ -240,6 +220,7 @@ SOFTWARE.
         self.render = render;
         self.showColumnEditableForm = showEditableForm('columnForms');
         self.showRowEditableForm = showEditableForm('rowForms');
+        self.generateColumnPrefix = generateColumnPrefix;
 
         /**
          * Allow caller to set hook function by name.
@@ -465,6 +446,18 @@ SOFTWARE.
             });
           }
         }
+
+        function generateColumnHeadPrefix(columnHead) {
+          if (self.columnHeadPrefixGenerator) {
+            return self.columnHeadPrefixGenerator(columnHead);
+          }
+        }
+
+        function generateRowStubPrefix(rowStub) {
+          if (self.rowStubPrefixGenerator) {
+            return self.rowStubPrefixGenerator(rowStub);
+          }
+        }
       }
       
       // Getting pretty big :/
@@ -481,6 +474,7 @@ SOFTWARE.
         scope.appendTo = appendTo.bind(scope);
         scope.getColumnForm = getColumnForm.bind(scope);
         scope.closeAllForms = closeAllForms.bind(scope);
+        scope.getScope = getScope.bind(scope);
 
         // Bind attributes to scope
         scope.tableClass = attrs.mtTableClass || "";
@@ -496,8 +490,8 @@ SOFTWARE.
         scope.disableRemoveColumns = attrs.mtDisableRemoveColumns ? true : false;
         scope.disableRemoveRows = attrs.mtDisableRemoveRows ? true : false;
         scope.disableRemove = attrs.mtDisableRemove ? true : false;
-        scope.columnHeadPrefixTransform = attrs.mtColumnHeadPrefixTransform || false;
-        scope.rowStubPrefixTransform = attrs.mtRowStubPrefixTransform || false;
+        scope.columnHeadPrefixTransform = attrs.mtColumnHeadPrefixTransform;
+        scope.rowStubPrefixTransform = attrs.mtRowStubPrefixTransform;
 
         scope.startWatching();
 
@@ -585,6 +579,10 @@ SOFTWARE.
               form.$cancel();
             });
           }
+        }
+
+        function getScope() {
+          return scope;
         }
       }
       
