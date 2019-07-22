@@ -71,7 +71,7 @@ SOFTWARE.
   .directive('mtEditedCopy', [
     '$parse',
     function mtEditedCopy($parse) {
-      var template = 'Edited Copy:&nbsp;<span>{{$copy}}</span>&nbsp;';
+      var template = '<span>{{$copy}}</span>&nbsp;';
       return {
         restrict: 'AE',
         scope: {
