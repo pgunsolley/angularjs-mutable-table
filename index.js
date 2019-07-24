@@ -488,15 +488,20 @@ SOFTWARE.
         scope.cancelBtnClass = attrs.mtBtnClass || attrs.mtCancelBtnClass || "";
         scope.removeBtnClass = attrs.mtBtnClass || attrs.mtRemoveBtnClass || "";
         scope.fillBtnClass = attrs.mtBtnClass || attrs.mtFillBtnClass || "";
-        scope.disableEdit = parseExpressionOrFalseFactory(attrs.mtDisableEditColumns);
-        scope.disableEditColumns = parseExpressionOrFalseFactory(attrs.mtDisableEditColumns);
-        scope.disableEditRows = parseExpressionOrFalseFactory(attrs.mtDisableEditRows);
-        
-        // TODO: Make into expressions
-        scope.disableRemoveColumns = parseExpressionOrFalseFactory(attrs.mtDisableRemoveColumns);
-        scope.disableRemoveRows = parseExpressionOrFalseFactory(attrs.mtDisableRemoveRows);
-        scope.disableRemove = parseExpressionOrFalseFactory(attrs.mtDisableRemove);
-        
+        scope.disableEdit = editOrRemoveActionExpressionFactory(attrs.mtDisableEditColumns);
+        scope.disableEditColumns = editOrRemoveActionExpressionFactory(attrs.mtDisableEditColumns, {
+          $columnHeads: ctrl.columnHeads
+        });
+        scope.disableEditRows = editOrRemoveActionExpressionFactory(attrs.mtDisableEditRows, {
+          $rowStubs: ctrl.rowStubs
+        });
+        scope.disableRemoveColumns = editOrRemoveActionExpressionFactory(attrs.mtDisableRemoveColumns, {
+          $columnHeads: ctrl.columnHeads
+        });
+        scope.disableRemoveRows = editOrRemoveActionExpressionFactory(attrs.mtDisableRemoveRows, {
+          $rowStubs: ctrl.rowStubs
+        });
+        scope.disableRemove = editOrRemoveActionExpressionFactory(attrs.mtDisableRemove);
         scope.columnHeadPrefixTransform = attrs.mtColumnHeadPrefixTransform;
         scope.rowStubPrefixTransform = attrs.mtRowStubPrefixTransform;
 
@@ -597,10 +602,10 @@ SOFTWARE.
         * evaluate it with $parse, otherwise just return false;
         * @param {*} optionalExp 
         */
-        function parseExpressionOrFalseFactory(optionalExp) {
+        function editOrRemoveActionExpressionFactory(optionalExp, locals) {
           return function() {
             if (optionalExp) {
-              return $parse(optionalExp)(scope.$parent);
+              return $parse(optionalExp)(scope.$parent, locals);
             }
             return false;
           }
