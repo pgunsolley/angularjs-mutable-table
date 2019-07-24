@@ -138,20 +138,7 @@ SOFTWARE.
          * If false is returned, the action dependent on the hook return value 
          * will not execute.
          */
-        hooks = {
-          /**
-           * Return value is not evaluated.
-           * Executed after editable form data is saved to the cells.
-           */
-          afterSave: function() {},
-          /**
-           * Return value can be boolean.
-           * If false is returned, no changes will be made.
-           */
-          beforeRemove: function() {},
-
-          afterCancel: function() {}
-        };
+        hooks = {};
 
         // @Public properties
 
@@ -223,6 +210,20 @@ SOFTWARE.
         self.generateColumnHeadPrefix = generateColumnHeadPrefix;
         self.generateRowStubPrefix = generateRowStubPrefix;
 
+        initHooks();
+
+        function initHooks() {
+          hooks = {};
+          [
+            'afterSave',
+            'beforeRemove',
+            'afterRemove', // TODO: Implement call
+            'afterCancel'
+          ].forEach(function(hookName) {
+            hooks[hookName] = function() {};
+          });
+        }
+
         /**
          * Allow caller to set hook function by name.
          * this is bound to the mutable-table controller.
@@ -266,15 +267,15 @@ SOFTWARE.
          * and removes cells.
          */
         function removeColumn(index) {
-          var removeHookRes;
+          var removeHookRes, targetColumnHead = self.columnHeads[index];
           if (self.busy)
             console.warn('Table is busy; unable to remove column.');
           else {
-            // TODO: Make this dry; same code in removeRow.
-            removeHookRes = hooks.beforeRemove(self.columnHeads[index]);
+            removeHookRes = hooks.beforeRemove(targetColumnHead, self.columnHeads, index);
             if (removeHookRes !== false) {
               self.columnHeads.splice(index, 1);
-            } 
+              hooks.afterRemove(targetColumnHead, self.columnHeads, index);
+            }
             else {
               console.log('Not removing column');
             }
@@ -300,14 +301,14 @@ SOFTWARE.
          * the corresponding row.
          */
         function removeRow(index) {
-          var removeHookRes;
+          var removeHookRes, targetRowStub = self.rowStubs[index];
           if (self.busy)
             console.warn('Table is busy; unable to remove row.');
           else {
-            // TODO: Make dry
-            removeHookRes = hooks.beforeRemove(self.rowStubs[index]);
+            removeHookRes = hooks.beforeRemove(targetRowStub, self.rowStubs, index);
             if (removeHookRes !== false) {
               self.rowStubs.splice(index, 1);
+              hooks.afterRemove(targetRowStub, self.rowStubs, index);
             } 
             else {
               console.log('Not removing column');
