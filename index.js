@@ -221,8 +221,8 @@ SOFTWARE.
         self.generateRowStubPrefix = generateRowStubPrefix;
         self.lockColumn = lockColumn;
         self.lockRow = lockRow;
-        self.unlockColumn = unlockColumn;
-        self.unlockRow = unlockRow;
+        self.unlockColumn = unlockFactory('column');
+        self.unlockRow = unlockFactory('row');
         self.isLockedColumn = isLockedFactory('column');
         self.isLockedRow = isLockedFactory('row');
 
@@ -290,17 +290,15 @@ SOFTWARE.
           }
         }
 
-        function unlockColumn(columnHead) {
-          var idx = $scope.locks.column.indexOf(columnHead);
-          if (idx > -1) {
-            $scope.locks.column.splice(idx, 1);
-          }
-        }
-
-        function unlockRow(rowStub) {
-          var idx = $scope.locks.row.indexOf(rowStub);
-          if (idx > -1) {
-            $scope.locks.row.splice(idx, 1);
+        function unlockFactory(type) {
+          return function unlock(name) {
+            var idx = $scope.locks[type].indexOf(name);
+            if (idx > -1) {
+              $scope.locks.column.splice(idx, 1);
+              $scope.locks.cells = $scope.locks.cells.filter(function(cell) {
+                return cell[type === 'column' ? 'columnHead' : 'rowStub'] !== name;
+              });
+            }
           }
         }
 
