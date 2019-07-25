@@ -197,8 +197,11 @@ SOFTWARE.
          * Locks prevent columns or rows from being removed.
          * Each lock type is an array of strings that correspond to a 
          * columnHead or rowStub.
+         *
+         * Cells generated for locked columns and rows should 
+         * be added to the cells array.
          */
-        $scope.locks = { column: [], row: [] };
+        $scope.locks = { column: [], row: [], cells: [] };
         
         // @Public methods
 
@@ -220,6 +223,8 @@ SOFTWARE.
         self.lockRow = lockRow;
         self.unlockColumn = unlockColumn;
         self.unlockRow = unlockRow;
+        self.isLockedColumn = isLockedFactory('column');
+        self.isLockedRow = isLockedFactory('row');
 
         initHooks();
 
@@ -296,6 +301,17 @@ SOFTWARE.
           var idx = $scope.locks.row.indexOf(rowStub);
           if (idx > -1) {
             $scope.locks.row.splice(idx, 1);
+          }
+        }
+
+        /**
+         * Generates a function that will check the corresponding
+         * lock type for a given column head or row stub.
+         * @param {*} type 
+         */
+        function isLockedFactory(type) {
+          return function isLocked(name) {
+            return $scope.locks[type].indexOf(name) > -1;
           }
         }
 
@@ -396,6 +412,14 @@ SOFTWARE.
                   rowStub: rowStubs[r],
                   value: ''
                 });
+                // If cell belongs to a locked column or row, store 
+                // it in locks.cells
+                if (
+                  self.isLockedColumn(columnHeads[c]) 
+                  && self.isLockedRow(rowStubs[r])
+                ) {
+                  $scope.locks.cells.push(cells[cells.length - 1]);
+                }
               }
             }
           } 
@@ -417,6 +441,11 @@ SOFTWARE.
             if (
               columnHeads.indexOf(cells[cc].columnHead) === -1
               || rowStubs.indexOf(cells[cc].rowStub) === -1
+
+              // Prevents removal of cells that correspond to 
+              // locked columns or rows
+              && !self.isLockedColumn(cells[cc].columnHead)
+              && !self.isLockedRow(cells[cc].rowStub)
             ) {
               removed.push(cells.splice(cc, 1)[0]);
               return removeCells(cc, removed);
@@ -462,9 +491,9 @@ SOFTWARE.
           $scope.stopWatching();
           self.columnHeads = [];
           self.rowStubs = [];
-          self.cells = cells;
+          self.cells = cells.concat($scope.locks.cells);
           self.cells.forEach(function(cell) {
-            if (!cell.columnHead || !cell.rowStub || !cell.value) {
+            if (!cell.columnHead || !cell.rowStub) {
               throw new Error('Unable to initialize table; invalid cell structure detected.');
             }
             if (self.columnHeads.indexOf(cell.columnHead) === -1) {
