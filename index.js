@@ -82,7 +82,7 @@ SOFTWARE.
                   '<form editable-form mt-p2p-form mt-p2p-namespace="columnForms" name="{{appendTo(\'columnForm\', $index)}}" ng-show="getColumnForm(\'columnForm\' + $index).$visible">' +
                     '<button type="submit" class="{{saveBtnClass}}" ng-click="xeditableFormToggle(); mt.hooks.afterSave()" ng-disabled="getColumnForm(\'columnForm\' + $index).$waiting" ng-show="getColumnForm(\'columnForm\' + $index).$visible">Save</button>' +
                     '<button type="button" class="{{cancelBtnClass}}" ng-disabled="getColumnForm(\'columnForm\' + $index).$waiting" ng-show="getColumnForm(\'columnForm\' + $index).$visible" ng-click="getColumnForm(\'columnForm\' + $index).$cancel(); xeditableFormToggle(); mt.hooks.afterCancel()">Cancel</button>' +
-                    '<button type="button" class="{{removeBtnClass}}" ng-click="xeditableFormToggle(); getColumnForm(\'columnForm\' + $index).$cancel();  mt.removeColumn($index);" ng-show="getColumnForm(\'columnForm\' + $index).$visible && !disableRemoveColumns() && !disableRemove()">Remove</button>' +
+                    '<button type="button" class="{{removeBtnClass}}" ng-click="xeditableFormToggle(); getColumnForm(\'columnForm\' + $index).$cancel();  mt.removeColumn($index);" ng-show="getColumnForm(\'columnForm\' + $index).$visible && !disableRemoveColumns() && !disableRemove() && !checkIfColumnLocked(mt.columnHeads[$index])">Remove</button>' +
                   '</form>' +
                   '<button type="button" class="{{editBtnClass}}" ng-hide="disableEdit() || disableEditColumns() || xeditableFormActive || getColumnForm(\'columnForm\' + $index).$visible" ng-click="getColumnForm(\'columnForm\' + $index).$show(); xeditableFormToggle()">Edit</button>' + 
                   '{{mt.generateColumnHeadPrefix(columnHead) + "&nbsp;" + columnHead}}' + 
@@ -95,7 +95,7 @@ SOFTWARE.
                   '<form editable-form mt-p2p-form mt-p2p-namespace="rowForms" name="rowForm" ng-show="rowForm.$visible">' +
                     '<button type="submit" class="{{saveBtnClass}}" ng-disabled="rowForm.$waiting" ng-show="rowForm.$visible" ng-click="xeditableFormToggle(); mt.hooks.afterSave()">Save</button>' +
                     '<button type="button" class="{{cancelBtnClass}}" ng-disabled="rowForm.$waiting" ng-show="rowForm.$visible" ng-click="rowForm.$cancel(); xeditableFormToggle(); mt.hooks.afterCancel()">Cancel</button>' +
-                    '<button type="button" class="{{removeBtnClass}}" ng-show="rowForm.$visible && !disableRemoveRows() && !disableRemove()" ng-click="xeditableFormToggle(); rowForm.$cancel(); mt.removeRow($index);">Remove</button>' + 
+                    '<button type="button" class="{{removeBtnClass}}" ng-show="rowForm.$visible && !disableRemoveRows() && !disableRemove() && !checkIfRowLocked(rowObj.rowStub)" ng-click="xeditableFormToggle(); rowForm.$cancel(); mt.removeRow($index);">Remove</button>' + 
                   '</form>' +
                   '<button ng-hide="disableEdit() || disableEditRows()" type="button" class="{{editBtnClass}}" ng-click="xeditableFormToggle(); rowForm.$show()" ng-show="!xeditableFormActive && !rowForm.$visible">Edit</button>' + 
                   '&nbsp;<b>{{mt.generateRowStubPrefix(rowObj.rowStub) + "&nbsp;" + rowObj.rowStub}}</b>' +
@@ -193,6 +193,13 @@ SOFTWARE.
          */
         $scope.tableModel = [];
         
+        /**
+         * Locks prevent columns or rows from being removed.
+         * Each lock type is an array of strings that correspond to a 
+         * columnHead or rowStub.
+         */
+        $scope.locks = { column: [], row: [] };
+        
         // @Public methods
 
         self.setHook = setHook;
@@ -209,6 +216,10 @@ SOFTWARE.
         self.showRowEditableForm = showEditableForm('rowForms');
         self.generateColumnHeadPrefix = generateColumnHeadPrefix;
         self.generateRowStubPrefix = generateRowStubPrefix;
+        self.lockColumn = lockColumn;
+        self.lockRow = lockRow;
+        self.unlockColumn = unlockColumn;
+        self.unlockRow = unlockRow;
 
         initHooks();
 
@@ -217,7 +228,7 @@ SOFTWARE.
           [
             'afterSave',
             'beforeRemove',
-            'afterRemove', // TODO: Implement call
+            'afterRemove',
             'afterCancel'
           ].forEach(function(hookName) {
             hooks[hookName] = function() {};
@@ -242,9 +253,49 @@ SOFTWARE.
           };
         }
 
+        /**
+         * Resets a named hook, if it exists.
+         * @param {*} name 
+         */
         function removeHook(name) {
           if (hooks[name]) {
             hooks[name] = function() {};
+          }
+        }
+
+        /**
+         * Locks column by columnHead name.
+         * A locked column cannot be removed.
+         * @param {*} columnHead 
+         */
+        function lockColumn(columnHead) {
+          if ($scope.locks.column.indexOf(columnHead) < 0) {
+            $scope.locks.column.push(columnHead);
+          }
+        }
+
+        /**
+         * Locks a row by rowStub name.
+         * A locked row cannot be removed.
+         * @param {*} rowStub 
+         */
+        function lockRow(rowStub) {
+          if ($scope.locks.row.indexOf(rowStub) < 0) {
+            $scope.locks.row.push(rowStub);
+          }
+        }
+
+        function unlockColumn(columnHead) {
+          var idx = $scope.locks.column.indexOf(columnHead);
+          if (idx > -1) {
+            $scope.locks.column.splice(idx, 1);
+          }
+        }
+
+        function unlockRow(rowStub) {
+          var idx = $scope.locks.row.indexOf(rowStub);
+          if (idx > -1) {
+            $scope.locks.row.splice(idx, 1);
           }
         }
 
@@ -375,8 +426,8 @@ SOFTWARE.
         }
         
         /**
-         * Renders the cells into the view. 
-         * The tableModel is generated using the cells.
+         * Generates the TableModel.
+         * This object is used by the template to render the table.
          */
         function render() {
           let cells = self.cells,
@@ -465,6 +516,7 @@ SOFTWARE.
       }
       
       // Getting pretty big :/
+      // Considering a rewrite that uses an isolate scope instead of manually working with attrs.
       function link(scope, elem, attrs, ctrl, transclude) {
         // An object/namespace for transcluded scopes.
         var transcludedScope = {};
@@ -479,6 +531,8 @@ SOFTWARE.
         scope.getColumnForm = getColumnForm.bind(scope);
         scope.closeAllForms = closeAllForms.bind(scope);
         scope.getScope = getScope.bind(scope);
+        scope.checkIfColumnLocked = checkIfLockedFactory('column').bind(scope);
+        scope.checkIfRowLocked = checkIfLockedFactory('row').bind(scope);
 
         // Bind attributes to scope
         scope.tableClass = attrs.mtTableClass || "";
@@ -495,6 +549,8 @@ SOFTWARE.
         scope.disableEditRows = editOrRemoveActionExpressionFactory(attrs.mtDisableEditRows, {
           $rowStubs: ctrl.rowStubs
         });
+
+        // TODO: Maybe swap words "disableRemove" with "lock" to be more consistent with new lock feature.
         scope.disableRemoveColumns = editOrRemoveActionExpressionFactory(attrs.mtDisableRemoveColumns, {
           $columnHeads: ctrl.columnHeads
         });
@@ -608,6 +664,12 @@ SOFTWARE.
               return $parse(optionalExp)(scope.$parent, locals);
             }
             return false;
+          }
+        }
+
+        function checkIfLockedFactory(type) {
+          return function checkIfLocked(name) {
+            return this.locks[type].indexOf(name) > -1;
           }
         }
       }
