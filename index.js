@@ -104,6 +104,40 @@ SOFTWARE.
     }
   ])
 
+  .directive('mtLockedColumn', [
+    function mtLockedColumnFactory() {
+      return {
+        restrict: 'A',
+        require: 'mtMutableTable',
+        link: link
+      };
+
+      function link(scope, elem, attrs, mtMutableTable) {
+        if (!attrs.mtLockedColumn) {
+          throw new Error('attribute mt-locked-column must have a value');
+        }
+        mtMutableTable.lockColumn(attrs.mtLockedColumn);
+      }
+    }
+  ])
+
+  .directive('mtLockedRow', [
+    function mtLockedRowFactory() {
+      return {
+        restrict: 'A',
+        require: 'mtMutableTable',
+        link: link
+      };
+
+      function link(scope, elem, attrs, mtMutableTable) {
+        if (!attrs.mtLockedRow) {
+          throw new Error('attribute mt-locked-row must have a value');
+        }
+        mtMutableTable.lockRow(attrs.mtLockedRow);
+      }
+    }
+  ])
+
   .directive('mtMutableTable', [
     '$parse',
     function mtMutableTableFactory($parse) {
