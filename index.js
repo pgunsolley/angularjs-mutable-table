@@ -68,8 +68,12 @@ SOFTWARE.
     }
   ])
 
-  .directive('mtRequiredColumn', [
-    function mtRequiredColumnFactory() {
+  // TODO: Make the required directives more dry since they share
+  // a lot of functionality 
+  // TODO: Rename 'required' to 'default'...
+  // they aren't really required... why did I call it that?
+  .directive('mtDefaultColumns', [
+    function mtDefaultColumnsFactory() {
       return {
         restrict: 'A',
         require: 'mtMutableTable',
@@ -77,7 +81,7 @@ SOFTWARE.
       };
 
       function link(scope, elem, attrs, mtMutableTable) {
-        attrs.$observe('mtRequiredColumn', function(val) {
+        attrs.mtDefaultColumns.split('|').forEach(function(val) {
           if (mtMutableTable.columnHeads.indexOf(val) < 0) {
             mtMutableTable.columnHeads.push(val);
           }
@@ -86,8 +90,9 @@ SOFTWARE.
     }
   ])
 
-  .directive('mtRequiredRow', [
-    function mtRequiredRowFactory() {
+  // TODO: Make dry with requiredColumn ^
+  .directive('mtDefaultRows', [ 
+    function mtDefaultRowsFactory() {
       return {
         restrict: 'A',
         require: 'mtMutableTable',
@@ -95,17 +100,17 @@ SOFTWARE.
       };
 
       function link(scope, elem, attrs, mtMutableTable) {
-        attrs.$observe('mtRequiredRow', function(val) {
-          if (mtMutableTable.rowStubs.indexOf(val) < 0) {
-            mtMutableTable.rowStubs.push(val);
+        attrs.mtDefaultRows.split('|').forEach(function(va) {
+          if (mtMutableTable.rowStubs.indexOf(va) < 0) {
+            mtMutableTable.rowStubs.push(va);
           }
         });
       }
     }
   ])
 
-  .directive('mtLockedColumn', [
-    function mtLockedColumnFactory() {
+  .directive('mtLockColumns', [
+    function mtLockColumnsFactory() {
       return {
         restrict: 'A',
         require: 'mtMutableTable',
@@ -113,16 +118,18 @@ SOFTWARE.
       };
 
       function link(scope, elem, attrs, mtMutableTable) {
-        if (!attrs.mtLockedColumn) {
-          throw new Error('attribute mt-locked-column must have a value');
+        if (!attrs.mtLockColumns) {
+          throw new Error('attribute mt-lock-columns must have a value');
         }
-        mtMutableTable.lockColumn(attrs.mtLockedColumn);
+        attrs.mtLockColumns.split('|').forEach(function(val) {
+          mtMutableTable.lockColumn(val);
+        });
       }
     }
   ])
 
-  .directive('mtLockedRow', [
-    function mtLockedRowFactory() {
+  .directive('mtLockRows', [
+    function mtLockRowsFactory() {
       return {
         restrict: 'A',
         require: 'mtMutableTable',
@@ -130,10 +137,12 @@ SOFTWARE.
       };
 
       function link(scope, elem, attrs, mtMutableTable) {
-        if (!attrs.mtLockedRow) {
-          throw new Error('attribute mt-locked-row must have a value');
+        if (!attrs.mtLockRows) {
+          throw new Error('attribute mt-lock-rows must have a value');
         }
-        mtMutableTable.lockRow(attrs.mtLockedRow);
+        attrs.mtLockRows.split('|').forEach(function(val) {
+          mtMutableTable.lockRow(val);
+        });
       }
     }
   ])
