@@ -511,14 +511,17 @@ SOFTWARE.
                   rowStub: rowStubs[r],
                   value: ''
                 });
-                // If cell belongs to a locked column or row, store 
-                // it in locks.cells
-                if (
-                  self.isLockedColumn(columnHeads[c]) 
-                  && self.isLockedRow(rowStubs[r])
-                ) {
-                  $scope.locks.cells.push(cells[cells.length - 1]);
-                }
+              }
+              // TODO: Consider removing this logic and just using 
+              // a watch expression.
+              // If cell belongs to a locked column or row, store 
+              // it in locks.cells
+              if (
+                self.isLockedColumn(columnHeads[c]) 
+                && self.isLockedRow(rowStubs[r])
+                && !findCellFor(columnHeads[c], rowStubs[r], $scope.locks.cells)
+              ) {
+                $scope.locks.cells.push(cells[cells.length - 1]);
               }
             }
           } 
@@ -640,6 +643,12 @@ SOFTWARE.
             return self.rowStubPrefixGenerator(rowStub, self.rowStubs);
           }
           return "";
+        }
+
+        function findCellFor(columnHead, rowStub, searchIn) {
+          return searchIn.filter(function(cell) {
+            return cell.columnHead === columnHead && cell.rowStub === rowStub;
+          })[0];
         }
       }
       
