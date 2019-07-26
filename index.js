@@ -68,6 +68,42 @@ SOFTWARE.
     }
   ])
 
+  .directive('mtRequiredColumn', [
+    function mtRequiredColumnFactory() {
+      return {
+        restrict: 'A',
+        require: 'mtMutableTable',
+        link: link
+      };
+
+      function link(scope, elem, attrs, mtMutableTable) {
+        attrs.$observe('mtRequiredColumn', function(val) {
+          if (mtMutableTable.columnHeads.indexOf(val) < 0) {
+            mtMutableTable.columnHeads.push(val);
+          }
+        });
+      }
+    }
+  ])
+
+  .directive('mtRequiredRow', [
+    function mtRequiredRowFactory() {
+      return {
+        restrict: 'A',
+        require: 'mtMutableTable',
+        link: link
+      };
+
+      function link(scope, elem, attrs, mtMutableTable) {
+        attrs.$observe('mtRequiredRow', function(val) {
+          if (mtMutableTable.rowStubs.indexOf(val) < 0) {
+            mtMutableTable.rowStubs.push(val);
+          }
+        });
+      }
+    }
+  ])
+
   .directive('mtMutableTable', [
     '$parse',
     function mtMutableTableFactory($parse) {
