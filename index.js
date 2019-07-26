@@ -243,7 +243,7 @@ SOFTWARE.
           },
           locks: {
             get: function() {
-              // Manually create a read-only array by breaking ref
+              // Manually create a deep read-only obj by breaking ref
               return {
                 column: $scope.locks.column.slice(),
                 row: $scope.locks.row.slice(),
