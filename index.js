@@ -129,7 +129,8 @@ SOFTWARE.
   ])
 
   .directive('mtLockRows', [
-    function mtLockRowsFactory() {
+    '$timeout', 
+    function mtLockRowsFactory($timeout) {
       return {
         restrict: 'A',
         require: 'mtMutableTable',
@@ -238,6 +239,16 @@ SOFTWARE.
           hooks: {
             get: function() {
               return hooks;
+            }
+          },
+          locks: {
+            get: function() {
+              // Manually create a read-only array by breaking ref
+              return {
+                column: $scope.locks.column.slice(),
+                row: $scope.locks.row.slice(),
+                cells: angular.copy($scope.locks.cells)
+              };
             }
           }
         });
