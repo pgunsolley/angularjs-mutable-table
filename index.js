@@ -541,13 +541,18 @@ SOFTWARE.
           removed = removed || [];
           for (let cc = startIndex || 0; cc < cells.length; ++cc) {
             if (
-              columnHeads.indexOf(cells[cc].columnHead) === -1
-              || rowStubs.indexOf(cells[cc].rowStub) === -1
+              // If the cell belongs to a missing row or column
+              (
+                columnHeads.indexOf(cells[cc].columnHead) === -1
+                || rowStubs.indexOf(cells[cc].rowStub) === -1
+              )
 
               // Prevents removal of cells that correspond to 
               // locked columns or rows
-              && !self.isLockedColumn(cells[cc].columnHead)
-              && !self.isLockedRow(cells[cc].rowStub)
+              && (
+                !self.isLockedColumn(cells[cc].columnHead)
+                || !self.isLockedRow(cells[cc].rowStub)
+              )
             ) {
               removed.push(cells.splice(cc, 1)[0]);
               return removeCells(cc, removed);
@@ -593,7 +598,7 @@ SOFTWARE.
           $scope.stopWatching();
           self.columnHeads = [];
           self.rowStubs = [];
-          self.cells = cells.concat($scope.locks.cells);
+          self.cells = cells;
           self.cells.forEach(function(cell) {
             if (!cell.columnHead || !cell.rowStub) {
               throw new Error('Unable to initialize table; invalid cell structure detected.');
@@ -741,7 +746,7 @@ SOFTWARE.
           else if (newLength < oldLength) {
             ctrl.removeCells();
           }
-          ctrl.render();
+          ctrl.initFromCells(JSON.parse(angular.toJson(ctrl.cells)));
         }
         
         // Set values on all xeditable elements to the right of the current 
