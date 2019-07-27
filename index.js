@@ -549,9 +549,9 @@ SOFTWARE.
 
               // Prevents removal of cells that correspond to 
               // locked columns or rows
-              && (
-                !self.isLockedColumn(cells[cc].columnHead)
-                || !self.isLockedRow(cells[cc].rowStub)
+              && !(
+                self.isLockedColumn(cells[cc].columnHead)
+                || self.isLockedRow(cells[cc].rowStub)
               )
             ) {
               removed.push(cells.splice(cc, 1)[0]);
@@ -746,7 +746,19 @@ SOFTWARE.
           else if (newLength < oldLength) {
             ctrl.removeCells();
           }
-          ctrl.initFromCells(JSON.parse(angular.toJson(ctrl.cells)));
+          resetLockedColumnsAndRows();
+          ctrl.render();
+        }
+
+        function resetLockedColumnsAndRows() {
+          [scope.locks.column, scope.locks.row].forEach(function(lockedArr, i) {
+            var target = ['columnHeads', 'rowStubs'][i];
+            lockedArr.forEach(function(val) {
+              if (ctrl[target].indexOf(val) < 0) {
+                ctrl[target].push(val);
+              }
+            });
+          })
         }
         
         // Set values on all xeditable elements to the right of the current 
