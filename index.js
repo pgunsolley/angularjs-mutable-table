@@ -197,7 +197,7 @@ SOFTWARE.
                   // Checkbox bound to column form
                   '<span ng-show="showCheckbox && getColumnForm(\'columnForm\' + $index).$visible" e-class="mt-cell-checkbox" editable-checkbox="cell.checked" e-form="getColumnForm(\'columnForm\' + $index)" e-name="checkbox">{{getColumnForm(\'columnForm\' + $index).$editables[$index].scope.$data ? checkboxChecked : checkboxUnchecked}}</span>' + 
                   // Checkbox bound to row form
-                  '<span ng-show="showCheckbox && rowForm.$visible)" e-class="mt-cell-checkbox" editable-checkbox="cell.checked" e-form="rowForm" e-name="checkbox">{{rowForm.checkbox.$editables[$index].scope.$data ? checkboxChecked : checkboxUnchecked}}</span>' + 
+                  '<span ng-show="showCheckbox && rowForm.$visible" e-class="mt-cell-checkbox" editable-checkbox="cell.checked" e-form="rowForm" e-name="checkbox">{{rowForm.checkbox.$editables[$index].scope.$data ? checkboxChecked : checkboxUnchecked}}</span>' + 
                   // Bound editable text for row form
                   '<span ng-show="rowForm.$visible" editable-text="cell.value" e-form="rowForm" e-name="{{appendTo(\'row\', $index)}}">{{cell.value}}</span>' + 
                   // Fill left and right controls for row form
