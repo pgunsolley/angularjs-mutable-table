@@ -193,7 +193,7 @@ SOFTWARE.
                 '</td>' +
                 '<td ng-repeat="cell in rowObj.cells">' +
                   '<span ng-show="!rowForm.$visible && !getColumnForm(\'columnForm\' + $index).$visible">{{cell.value}}</span>' + 
-                  '<span ng-show="!!checkboxLabel && (getColumnForm(\'columnForm\' + $index).$visible || rowForm.$visible)"><input type="checkbox" ng-model="cell.checked" />&nbsp;{{checkboxLabel}}</span>' + 
+                  '<span ng-show="!!checkbox && (getColumnForm(\'columnForm\' + $index).$visible || rowForm.$visible)"><input type="checkbox" ng-model="cell.checked" />&nbsp;{{checkbox}}&nbsp;</span>' + 
                   '<span ng-show="rowForm.$visible" editable-text="cell.value" e-form="rowForm" e-name="{{appendTo(\'row\', $index)}}">{{cell.value}}</span>' + 
                   '<button ng-show="rowForm.$visible && $index > 0" type="button" class="{{fillBtnClass}}" ng-click="fillLeft($index, rowForm)">&#8592;</button>' +
                   '<button ng-show="rowForm.$visible && $index < rowObj.cells.length - 1" type="button" class="{{fillBtnClass}}" ng-click="fillRight($index, rowForm)">&#8594;</button>' +
@@ -709,7 +709,7 @@ SOFTWARE.
         scope.rowStubPrefixTransform = attrs.mtRowStubPrefixTransform;
 
         // Enable and configure the cell checkboxes
-        scope.checkboxLabel = attrs.mtCheckboxLabel;
+        scope.checkbox = attrs.mtCheckbox;
 
         scope.startWatching();
 
