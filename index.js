@@ -193,13 +193,13 @@ SOFTWARE.
                 '</td>' +
                 '<td ng-repeat="cell in rowObj.cells">' +
                   '<span ng-show="!rowForm.$visible && !getColumnForm(\'columnForm\' + $index).$visible">{{cell.value}}</span>' + 
+                  '<span ng-show="!!checkboxLabel"><input type="checkbox" ng-model="cell.checked" />&nbsp;{{checkboxLabel}}</span>' + 
                   '<span ng-show="rowForm.$visible" editable-text="cell.value" e-form="rowForm" e-name="{{appendTo(\'row\', $index)}}">{{cell.value}}</span>' + 
                   '<button ng-show="rowForm.$visible && $index > 0" type="button" class="{{fillBtnClass}}" ng-click="fillLeft($index, rowForm)">&#8592;</button>' +
                   '<button ng-show="rowForm.$visible && $index < rowObj.cells.length - 1" type="button" class="{{fillBtnClass}}" ng-click="fillRight($index, rowForm)">&#8594;</button>' +
                   '<span ng-show="getColumnForm(\'columnForm\' + $index).$visible" editable-text="cell.value" e-form="getColumnForm(\'columnForm\' + $index)" e-name="{{appendTo(\'column\', $index)}}">{{cell.value}}</span>' +
                   '<button type="button" ng-show="getColumnForm(\'columnForm\' + $index).$visible && tableModel.indexOf(rowObj) > 0" class="{{fillBtnClass}}" ng-click="fillLeft(tableModel.indexOf(rowObj), getColumnForm(\'columnForm\' + $index))">&#8593;</button>' +
                   '<button type="button" ng-show="getColumnForm(\'columnForm\' + $index).$visible && tableModel.indexOf(rowObj) < tableModel.length - 1" class="{{fillBtnClass}}" ng-click="fillRight(tableModel.indexOf(rowObj), getColumnForm(\'columnForm\' + $index))">&#8595;</button>' +
-                  '<div id="mt-transclude-cell-item" ng-show="getColumnForm(\'columnForm\' + $index).$visible || rowForm.$visible"></div>' +
                 '</td>' +
               '</tr>' +
             '</tbody>' +
@@ -713,7 +713,6 @@ SOFTWARE.
         scope.rowStubPrefixTransform = attrs.mtRowStubPrefixTransform;
 
         // Enable and configure the cell checkboxes
-        scope.enableCheckbox = attrs.mtEnableCheckbox ? true : false;
         scope.checkboxLabel = attrs.mtCheckboxLabel;
 
         scope.startWatching();
