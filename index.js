@@ -663,6 +663,7 @@ SOFTWARE.
         // An object/namespace for transcluded scopes.
         var transcludedScope = {};
 
+        // Properties and methods
         scope.xeditableFormActive = false;
         scope.xeditableFormToggle = xeditableFormToggle.bind(scope);
         scope.startWatching = startWatching.bind(scope);
@@ -677,6 +678,10 @@ SOFTWARE.
         scope.checkIfRowLocked = checkIfLockedFactory('row').bind(scope);
 
         // Bind attributes to scope
+
+        // Classes/id .. probably not the best approach lul
+        // TODO: Switch to hard-coded classes and id and allow the user 
+        // to just use CSS 
         scope.tableClass = attrs.mtTableClass || "";
         scope.tableId = attrs.mtTableId || "";
         scope.editBtnClass = attrs.mtBtnClass || attrs.mtEditBtnClass || "";
@@ -684,6 +689,8 @@ SOFTWARE.
         scope.cancelBtnClass = attrs.mtBtnClass || attrs.mtCancelBtnClass || "";
         scope.removeBtnClass = attrs.mtBtnClass || attrs.mtRemoveBtnClass || "";
         scope.fillBtnClass = attrs.mtBtnClass || attrs.mtFillBtnClass || "";
+        
+        // Disable the edit buttons
         scope.disableEdit = editOrRemoveActionExpressionFactory(attrs.mtDisableEditColumns);
         scope.disableEditColumns = editOrRemoveActionExpressionFactory(attrs.mtDisableEditColumns, {
           $columnHeads: ctrl.columnHeads
@@ -700,8 +707,14 @@ SOFTWARE.
           $rowStubs: ctrl.rowStubs
         });
         scope.disableRemove = editOrRemoveActionExpressionFactory(attrs.mtDisableRemove);
+        
+        // Set transform expressions for the column head/row stub prefixes
         scope.columnHeadPrefixTransform = attrs.mtColumnHeadPrefixTransform;
         scope.rowStubPrefixTransform = attrs.mtRowStubPrefixTransform;
+
+        // Enable and configure the cell checkboxes
+        scope.enableCheckbox = attrs.mtEnableCheckbox ? true : false;
+        scope.checkboxLabel = attrs.mtCheckboxLabel;
 
         scope.startWatching();
 
