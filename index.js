@@ -193,7 +193,7 @@ SOFTWARE.
                 '</td>' +
                 '<td ng-repeat="cell in rowObj.cells">' +
                   '<span ng-show="!rowForm.$visible && !getColumnForm(\'columnForm\' + $index).$visible">{{cell.value}}</span>' + 
-                  '<span ng-show="!!checkbox && (getColumnForm(\'columnForm\' + $index).$visible || rowForm.$visible)"><input type="checkbox" ng-model="cell.checked" />&nbsp;{{checkbox}}&nbsp;</span>' + 
+                  '&nbsp;{{checkbox}}&nbsp;<input class="mt-cell-checkbox" ng-show="!!checkbox && (getColumnForm(\'columnForm\' + $index).$visible || rowForm.$visible)" type="checkbox" ng-model="cell.checked" />&nbsp;' + 
                   '<span ng-show="rowForm.$visible" editable-text="cell.value" e-form="rowForm" e-name="{{appendTo(\'row\', $index)}}">{{cell.value}}</span>' + 
                   '<button ng-show="rowForm.$visible && $index > 0" type="button" class="{{fillBtnClass}}" ng-click="fillLeft($index, rowForm)">&#8592;</button>' +
                   '<button ng-show="rowForm.$visible && $index < rowObj.cells.length - 1" type="button" class="{{fillBtnClass}}" ng-click="fillRight($index, rowForm)">&#8594;</button>' +
