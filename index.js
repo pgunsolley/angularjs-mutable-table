@@ -193,7 +193,7 @@ SOFTWARE.
                 '</td>' +
                 '<td ng-repeat="cell in rowObj.cells">' +
                   '<span ng-show="!rowForm.$visible && !getColumnForm(\'columnForm\' + $index).$visible">{{cell.value}}</span>' + 
-                  '<span ng-show="!!checkboxLabel && getColumnForm(\'columnForm\' + $index).$visible"><input type="checkbox" ng-model="cell.checked" />&nbsp;{{checkboxLabel}}</span>' + 
+                  '<span ng-show="!!checkboxLabel && (getColumnForm(\'columnForm\' + $index).$visible || rowForm.$visible)"><input type="checkbox" ng-model="cell.checked" />&nbsp;{{checkboxLabel}}</span>' + 
                   '<span ng-show="rowForm.$visible" editable-text="cell.value" e-form="rowForm" e-name="{{appendTo(\'row\', $index)}}">{{cell.value}}</span>' + 
                   '<button ng-show="rowForm.$visible && $index > 0" type="button" class="{{fillBtnClass}}" ng-click="fillLeft($index, rowForm)">&#8592;</button>' +
                   '<button ng-show="rowForm.$visible && $index < rowObj.cells.length - 1" type="button" class="{{fillBtnClass}}" ng-click="fillRight($index, rowForm)">&#8594;</button>' +
@@ -210,8 +210,7 @@ SOFTWARE.
         scope: true,
         controllerAs: 'mt',
         link: link,
-        template: template,
-        transclude: true
+        template: template
       }
 
       function controller($scope, $attrs, $timeout) {
@@ -659,10 +658,7 @@ SOFTWARE.
       
       // Getting pretty big :/
       // Considering a rewrite that uses an isolate scope instead of manually working with attrs.
-      function link(scope, elem, attrs, ctrl, transclude) {
-        // An object/namespace for transcluded scopes.
-        var transcludedScope = {};
-
+      function link(scope, elem, attrs, ctrl) {
         // Properties and methods
         scope.xeditableFormActive = false;
         scope.xeditableFormToggle = xeditableFormToggle.bind(scope);
@@ -716,12 +712,6 @@ SOFTWARE.
         scope.checkboxLabel = attrs.mtCheckboxLabel;
 
         scope.startWatching();
-
-        // TODO: Break off the templates by directive?
-        transclude(function(clone, scope) {
-          // TODO: Check for directives
-          
-        });
 
         function startWatching() {
           this.dereg = [
