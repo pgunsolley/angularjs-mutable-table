@@ -196,9 +196,9 @@ SOFTWARE.
                   // Bound cell value for display when no forms are active
                   '<span ng-show="!rowForm.$visible && !getColumnForm(\'columnForm\' + $index).$visible">{{cell.value}}</span>' + 
                   // Checkbox bound to column form
-                  '<span ng-show="showCheckbox && getColumnForm(\'columnForm\' + $index).$visible" e-class="mt-cell-checkbox" editable-checkbox="cell.checked" e-form="getColumnForm(\'columnForm\' + $index)" e-name="{{\'checkbox\' + tableModel.indexOf(rowObj)}}">{{getColumnForm(\'columnForm\' + $index).$editables[$index].scope.$data ? checkboxChecked : checkboxUnchecked}}</span>' + 
+                  '<span ng-show="showCheckbox && getColumnForm(\'columnForm\' + $index).$visible" e-class="mt-cell-checkbox" editable-checkbox="cell.checked" e-form="getColumnForm(\'columnForm\' + $index)" e-name="{{\'checkbox\' + tableModel.indexOf(rowObj)}}">{{getColumnForm(\'columnForm\' + $index).$data[\'checkbox\' + tableModel.indexOf(rowObj)] ? checkboxChecked : checkboxUnchecked}}</span>' + 
                   // Checkbox bound to row form
-                  '<span ng-show="showCheckbox && rowForm.$visible" e-class="mt-cell-checkbox" editable-checkbox="cell.checked" e-form="rowForm" e-name="{{\'checkbox\' + $index}}">{{rowForm.checkbox.$editables[$index].scope.$data ? checkboxChecked : checkboxUnchecked}}</span>' + 
+                  '<span ng-show="showCheckbox && rowForm.$visible" e-class="mt-cell-checkbox" editable-checkbox="cell.checked" e-form="rowForm" e-name="{{\'checkbox\' + $index}}">{{rowForm.$data[\'checkbox\' + $index] ? checkboxChecked : checkboxUnchecked}}</span>' + 
                   // Bound editable text for row form
                   '<span ng-show="rowForm.$visible" editable-text="cell.value" e-form="rowForm" e-name="{{\'text\' + $index}}">{{cell.value}}</span>' + 
                   // Fill left and right controls for row form
@@ -673,8 +673,12 @@ SOFTWARE.
         scope.xeditableFormToggle = xeditableFormToggle.bind(scope);
         scope.startWatching = startWatching.bind(scope);
         scope.stopWatching = stopWatching.bind(scope);
-        scope.fillLeft = fillLeft.bind(scope);
-        scope.fillRight = fillRight.bind(scope);
+        scope.fillLeft = fillEditables(function(targetNum, matchNum) {
+          return targetNum < matchNum;
+        }).bind(scope);
+        scope.fillRight = fillEditables(function(targetNum, matchNum) {
+          return targetNum > matchNum;
+        }).bind(scope);
         scope.appendTo = appendTo.bind(scope);
         scope.getColumnForm = getColumnForm.bind(scope);
         scope.closeAllForms = closeAllForms.bind(scope);
@@ -774,22 +778,41 @@ SOFTWARE.
           })
         }
         
-        // Set values on all xeditable elements to the right of the current 
-        // cell index
-        function fillRight(cellIndex, form) {
-          let editables = form.$editables,
-              value = editables[cellIndex].scope.$data;
-          for (let i = cellIndex + 1; i < editables.length; ++i) {
-            editables[i].scope.$data = value;
-          }
-        }
+        function fillEditables(strategy) {
+          return function(num, form) {
+            num = parseInt(num);
+            var editables = form.$editables,
+                targets = [],
+                editable,
+                targetNameText,
+                targetNameNum,
+                value;
   
-        // Obvious function name is obvious
-        function fillLeft(cellIndex, form) {
-          let editables = form.$editables,
-              value = editables[cellIndex].scope.$data;
-          for (let i = cellIndex - 1; i > -1; --i) {
-            editables[i].scope.$data = value;
+            for (var i = 0; i < editables.length; ++i) {
+              editable = editables[i];
+              targetNameText = getText(editable.name);
+              targetNameNum = getNum(editable.name);
+              if (editable.name === 'text' + num) {
+                value = editable.scope.$data;
+                continue;
+              }
+  
+              if (targetNameText === 'text' && strategy(targetNameNum, num)) {
+                targets.push(editable);
+              }
+            }
+  
+            targets.forEach(function(editable) {
+              editable.scope.$data = value;
+            });
+            
+            function getText(name) {
+              return name.match(/[a-zA-Z]+/)[0];
+            }
+  
+            function getNum(name) {
+              return parseInt(name.match(/[0-9]+/)[0]);
+            }  
           }
         }
         
@@ -839,11 +862,6 @@ SOFTWARE.
             return this.locks[type].indexOf(name) > -1;
           }
         }
-
-        // TODO: Remove; debug only
-        $timeout(function() {
-          console.log(scope);
-        });
       }
       
       // When an xeditable form becomes active, we need to disable all 
