@@ -784,28 +784,48 @@ SOFTWARE.
           return function(num, form) {
             num = parseInt(num);
             var editables = form.$editables,
-                targets = [],
+                textTargets = [],
+                checkboxTargets = [],
                 editable,
                 targetNameText,
                 targetNameNum,
-                value;
+                textValue,
+                checkboxValue;
   
             for (var i = 0; i < editables.length; ++i) {
               editable = editables[i];
               targetNameText = getText(editable.name);
               targetNameNum = getNum(editable.name);
+
+              // Editable to copy text value from
               if (editable.name === 'text' + num) {
-                value = editable.scope.$data;
+                textValue = editable.scope.$data;
                 continue;
               }
-  
-              if (targetNameText === 'text' && strategy(targetNameNum, num)) {
-                targets.push(editable);
+
+              // Editable to copy checkbox value from
+              if (editable.name === 'checkbox' + num) {
+                checkboxValue = editable.scope.$data;
+                continue;
+              }
+              
+              if (strategy(targetNameNum, num)) {
+                // Text editables
+                if (targetNameText === 'text') {
+                  textTargets.push(editable);
+                }
+                // Checkbox editables
+                else if (targetNameText === 'checkbox') {
+                  checkboxTargets.push(editable);
+                }
               }
             }
   
-            targets.forEach(function(editable) {
-              editable.scope.$data = value;
+            textTargets.forEach(function(editable) {
+              editable.scope.$data = textValue;
+            });
+            checkboxTargets.forEach(function(editable) {
+              editable.scope.$data = checkboxValue;
             });
             
             function getText(name) {
