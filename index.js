@@ -161,7 +161,8 @@ SOFTWARE.
 
   .directive('mtMutableTable', [
     '$parse',
-    function mtMutableTableFactory($parse) {
+    '$timeout',
+    function mtMutableTableFactory($parse, $timeout) {
       // A template literal would be preferred, however at the time of writing this, 
       // my company's build pipeline didn't support some modern JS features :3 
       let template = 
@@ -838,6 +839,11 @@ SOFTWARE.
             return this.locks[type].indexOf(name) > -1;
           }
         }
+
+        // TODO: Remove; debug only
+        $timeout(function() {
+          console.log(scope);
+        });
       }
       
       // When an xeditable form becomes active, we need to disable all 
