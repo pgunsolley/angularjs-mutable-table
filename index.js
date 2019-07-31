@@ -200,12 +200,12 @@ SOFTWARE.
                   // Checkbox bound to row form
                   '<span ng-show="showCheckbox && rowForm.$visible" e-class="mt-cell-checkbox" editable-checkbox="cell.checked" e-form="rowForm" e-name="{{\'checkbox\' + $index}}">{{rowForm.checkbox.$editables[$index].scope.$data ? checkboxChecked : checkboxUnchecked}}</span>' + 
                   // Bound editable text for row form
-                  '<span ng-show="rowForm.$visible" editable-text="cell.value" e-form="rowForm" e-name="\'text\' + $index">{{cell.value}}</span>' + 
+                  '<span ng-show="rowForm.$visible" editable-text="cell.value" e-form="rowForm" e-name="{{\'text\' + $index}}">{{cell.value}}</span>' + 
                   // Fill left and right controls for row form
                   '<button ng-show="rowForm.$visible && $index > 0" type="button" class="{{fillBtnClass}}" ng-click="fillLeft($index, rowForm)">&#8592;</button>' +
                   '<button ng-show="rowForm.$visible && $index < rowObj.cells.length - 1" type="button" class="{{fillBtnClass}}" ng-click="fillRight($index, rowForm)">&#8594;</button>' +
                   // Bound editable text for column form
-                  '<span ng-show="getColumnForm(\'columnForm\' + $index).$visible" editable-text="cell.value" e-form="getColumnForm(\'columnForm\' + $index)" e-name="\'text\' + tableModel.indexOf(rowObj)">{{cell.value}}</span>' +
+                  '<span ng-show="getColumnForm(\'columnForm\' + $index).$visible" editable-text="cell.value" e-form="getColumnForm(\'columnForm\' + $index)" e-name="{{\'text\' + tableModel.indexOf(rowObj)}}">{{cell.value}}</span>' +
                   // Fill up and down controls for column form
                   '<button type="button" ng-show="getColumnForm(\'columnForm\' + $index).$visible && tableModel.indexOf(rowObj) > 0" class="{{fillBtnClass}}" ng-click="fillLeft(tableModel.indexOf(rowObj), getColumnForm(\'columnForm\' + $index))">&#8593;</button>' +
                   '<button type="button" ng-show="getColumnForm(\'columnForm\' + $index).$visible && tableModel.indexOf(rowObj) < tableModel.length - 1" class="{{fillBtnClass}}" ng-click="fillRight(tableModel.indexOf(rowObj), getColumnForm(\'columnForm\' + $index))">&#8595;</button>' +
