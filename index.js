@@ -196,9 +196,9 @@ SOFTWARE.
                   // Bound cell value for display when no forms are active
                   '<span ng-show="!rowForm.$visible && !getColumnForm(\'columnForm\' + $index).$visible">{{cell.value}}</span>' + 
                   // Checkbox bound to column form
-                  '<span ng-show="showCheckbox && getColumnForm(\'columnForm\' + $index).$visible" e-class="mt-cell-checkbox" editable-checkbox="cell.checked" e-form="getColumnForm(\'columnForm\' + $index)" e-name="{{\'checkbox\' + tableModel.indexOf(rowObj)}}">{{getColumnForm(\'columnForm\' + $index).$data[\'checkbox\' + tableModel.indexOf(rowObj)] ? checkboxChecked : checkboxUnchecked}}</span>' + 
+                  '<span ng-show="showCheckbox && getColumnForm(\'columnForm\' + $index).$visible" e-class="mt-cell-checkbox" editable-checkbox="cell.checked" e-form="getColumnForm(\'columnForm\' + $index)" e-name="{{\'checkbox\' + tableModel.indexOf(rowObj)}}"><label>{{getColumnForm(\'columnForm\' + $index).$data[\'checkbox\' + tableModel.indexOf(rowObj)] ? checkboxChecked : checkboxUnchecked}}</label></span>' + 
                   // Checkbox bound to row form
-                  '<span ng-show="showCheckbox && rowForm.$visible" e-class="mt-cell-checkbox" editable-checkbox="cell.checked" e-form="rowForm" e-name="{{\'checkbox\' + $index}}">{{rowForm.$data[\'checkbox\' + $index] ? checkboxChecked : checkboxUnchecked}}</span>' + 
+                  '<span ng-show="showCheckbox && rowForm.$visible" e-class="mt-cell-checkbox" editable-checkbox="cell.checked" e-form="rowForm" e-name="{{\'checkbox\' + $index}}"><label>{{rowForm.$data[\'checkbox\' + $index] ? checkboxChecked : checkboxUnchecked}}</label></span>' + 
                   // Bound editable text for row form
                   '<span ng-show="rowForm.$visible" editable-text="cell.value" e-form="rowForm" e-name="{{\'text\' + $index}}">{{cell.value}}</span>' + 
                   // Fill left and right controls for row form
