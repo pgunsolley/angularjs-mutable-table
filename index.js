@@ -195,6 +195,8 @@ SOFTWARE.
                 '<td ng-repeat="cell in rowObj.cells">' +
                   // Bound cell value for display when no forms are active
                   '<span ng-show="!rowForm.$visible && !getColumnForm(\'columnForm\' + $index).$visible">{{cell.value}}</span>' + 
+                  // Bound checkbox label for when no forms are active
+                  '&nbsp;<label>({{cell.checked ? checkboxChecked : checkboxUnchecked}})</label>' +
                   // Checkbox bound to column form
                   '<span ng-show="showCheckbox && getColumnForm(\'columnForm\' + $index).$visible" e-class="mt-cell-checkbox" editable-checkbox="cell.checked" e-form="getColumnForm(\'columnForm\' + $index)" e-name="{{\'checkbox\' + tableModel.indexOf(rowObj)}}"></span>' + 
                   '&nbsp;<label ng-show="showCheckbox && getColumnForm(\'columnForm\' + $index).$visible">{{getColumnForm(\'columnForm\' + $index).$data[\'checkbox\' + tableModel.indexOf(rowObj)] ? checkboxChecked : checkboxUnchecked}}</label>' +
