@@ -712,7 +712,7 @@ SOFTWARE.
         scope.rowStubPrefixTransform = attrs.mtRowStubPrefixTransform;
 
         // Enable and configure the cell checkboxes
-        scope.showCheckbox = attrs.mtShowCheckbox ? true : false;
+        scope.showCheckbox = attrs.mtShowCheckbox;
         scope.checkboxChecked = attrs.mtCheckboxChecked;
         scope.checkboxUnchecked = attrs.mtCheckboxUnchecked;
 
