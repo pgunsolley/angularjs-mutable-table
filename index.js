@@ -690,7 +690,7 @@ SOFTWARE.
         scope.fillBtnClass = attrs.mtBtnClass || attrs.mtFillBtnClass || "";
         
         // Disable the edit buttons
-        scope.disableEdit = editOrRemoveActionExpressionFactory(attrs.mtDisableEditColumns);
+        scope.disableEdit = editOrRemoveActionExpressionFactory(attrs.mtDisableEdit);
         scope.disableEditColumns = editOrRemoveActionExpressionFactory(attrs.mtDisableEditColumns, {
           $columnHeads: ctrl.columnHeads
         });
