@@ -681,6 +681,7 @@ SOFTWARE.
         // Classes/id .. probably not the best approach lul
         // TODO: Switch to hard-coded classes and id and allow the user 
         // to just use CSS 
+        scope.mt.rowsHeader = scope.mt.rowsHeader || attrs.mtRowsHeader || "";
         scope.tableClass = attrs.mtTableClass || "";
         scope.tableId = attrs.mtTableId || "";
         scope.editBtnClass = attrs.mtBtnClass || attrs.mtEditBtnClass || "";
