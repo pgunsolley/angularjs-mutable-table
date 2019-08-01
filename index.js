@@ -332,8 +332,8 @@ SOFTWARE.
         self.showRowEditableForm = showEditableForm('rowForms');
         self.generateColumnHeadPrefix = generateColumnHeadPrefix;
         self.generateRowStubPrefix = generateRowStubPrefix;
-        self.lockColumn = lockColumn;
-        self.lockRow = lockRow;
+        self.lockColumn = lockFactory('column');
+        self.lockRow = lockFactory('row');
         self.unlockColumn = unlockFactory('column');
         self.unlockRow = unlockFactory('row');
         self.isLockedColumn = isLockedFactory('column');
@@ -381,25 +381,11 @@ SOFTWARE.
           }
         }
 
-        /**
-         * Locks column by columnHead name.
-         * A locked column cannot be removed.
-         * @param {*} columnHead 
-         */
-        function lockColumn(columnHead) {
-          if ($scope.locks.column.indexOf(columnHead) < 0) {
-            $scope.locks.column.push(columnHead);
-          }
-        }
-
-        /**
-         * Locks a row by rowStub name.
-         * A locked row cannot be removed.
-         * @param {*} rowStub 
-         */
-        function lockRow(rowStub) {
-          if ($scope.locks.row.indexOf(rowStub) < 0) {
-            $scope.locks.row.push(rowStub);
+        function lockFactory(target) {
+          return function lock(name) {
+            if ($scope.locks[target].indexOf(name) < 0) {
+              $scope.locks[target].push(name);
+            }
           }
         }
 
