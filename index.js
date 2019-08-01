@@ -194,7 +194,7 @@ SOFTWARE.
                 '</td>' +
                 '<td ng-repeat="cell in rowObj.cells">' +
                   // Bound checkbox label for when no forms are active
-                  '<span ng-hide="mt.busy">({{cell.checked ? checkboxChecked : checkboxUnchecked}})</span>&nbsp;' +
+                  '<span ng-hide="mt.busy">{{cell.checked ? checkboxChecked : checkboxUnchecked}}</span>&nbsp;' +
                   // Bound cell value for display when no forms are active
                   '<span ng-show="!rowForm.$visible && !getColumnForm(\'columnForm\' + $index).$visible">{{cell.value}}</span>' + 
                   // Checkbox bound to column form
