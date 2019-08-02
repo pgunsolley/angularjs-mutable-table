@@ -729,8 +729,8 @@ SOFTWARE.
         scope.showCheckbox = attrs.mtShowCheckbox === 'true' ? true : false;
         scope.checkboxCheckedText = attrs.mtCheckboxCheckedText;
         scope.checkboxUncheckedText = attrs.mtCheckboxUncheckedText;
-        scope.checkboxCheckedPosition = attrs.mtCheckboxCheckedPosition || 'left';
-        scope.checkboxUncheckedPosition = attrs.mtCheckboxUncheckedPosition || 'left';
+        scope.checkboxCheckedTextPosition = attrs.mtCheckboxCheckedPosition || 'left';
+        scope.checkboxUncheckedTextPosition = attrs.mtCheckboxUncheckedPosition || 'left';
 
         scope.startWatching();
 
