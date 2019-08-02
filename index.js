@@ -193,23 +193,36 @@ SOFTWARE.
                   '&nbsp;<b>{{mt.generateRowStubPrefix(rowObj.rowStub) + "&nbsp;" + rowObj.rowStub}}</b>' +
                 '</td>' +
                 '<td ng-repeat="cell in rowObj.cells">' +
-                  // Bound checkbox label for when no forms are active
-                  '<span ng-hide="mt.busy">{{cell.checked ? checkboxCheckedText : checkboxUncheckedText}}</span>&nbsp;' +
+                  
+                  // Bound checkbox label for when no forms are active, and 
+                  // checkbox position is left
+                  '<span ng-show="(showCheckbox && !mt.busy) && ((cell.checked && checkboxCheckedPosition === \'left\') || (!cell.checked && checkboxUncheckedPosition === \'left\'))">{{cell.checked ? checkboxCheckedText : checkboxUncheckedText}}</span>&nbsp;' +
+                  
                   // Bound cell value for display when no forms are active
                   '<span ng-show="!rowForm.$visible && !getColumnForm(\'columnForm\' + $index).$visible">{{cell.value}}</span>' + 
+                  
                   // Checkbox bound to column form
                   '<span ng-if="showCheckbox && getColumnForm(\'columnForm\' + $index).$visible" e-class="mt-cell-checkbox" editable-checkbox="cell.checked" e-form="getColumnForm(\'columnForm\' + $index)" e-name="{{\'checkbox\' + tableModel.indexOf(rowObj)}}"></span>' + 
                   '&nbsp;<span ng-show="showCheckbox && getColumnForm(\'columnForm\' + $index).$visible">{{getColumnForm(\'columnForm\' + $index).$data[\'checkbox\' + tableModel.indexOf(rowObj)] ? checkboxCheckedText : checkboxUncheckedText}}</span>' +
+                  
                   // Checkbox bound to row form
                   '<span ng-if="showCheckbox && rowForm.$visible" e-class="mt-cell-checkbox" editable-checkbox="cell.checked" e-form="rowForm" e-name="{{\'checkbox\' + $index}}"></span>' + 
                   '&nbsp;<span ng-show="showCheckbox && rowForm.$visible">{{rowForm.$data[\'checkbox\' + $index] ? checkboxCheckedText : checkboxUncheckedText}}</span>' +
+                  
                   // Bound editable text for row form
                   '<span ng-show="rowForm.$visible" editable-text="cell.value" e-form="rowForm" e-name="{{\'text\' + $index}}">{{cell.value}}</span>' + 
+                  
+                  // Bound editable text for column form
+                  '<span ng-show="getColumnForm(\'columnForm\' + $index).$visible" editable-text="cell.value" e-form="getColumnForm(\'columnForm\' + $index)" e-name="{{\'text\' + tableModel.indexOf(rowObj)}}">{{cell.value}}</span>' +
+                  
+                  // Bound checkbox label for when no forms are active, and 
+                  // checkbox position is right
+                  '<span ng-show="(showCheckbox && !mt.busy) && ((cell.checked && checkboxCheckedPosition === \'right\') || (!cell.checked && checkboxUncheckedPosition === \'right\'))">{{cell.checked ? checkboxCheckedText : checkboxUncheckedText}}</span>&nbsp;' +
+                  
                   // Fill left and right controls for row form
                   '<button ng-show="rowForm.$visible && $index > 0" type="button" class="{{fillBtnClass}}" ng-click="fillLeft($index, rowForm)">&#8592;</button>' +
                   '<button ng-show="rowForm.$visible && $index < rowObj.cells.length - 1" type="button" class="{{fillBtnClass}}" ng-click="fillRight($index, rowForm)">&#8594;</button>' +
-                  // Bound editable text for column form
-                  '<span ng-show="getColumnForm(\'columnForm\' + $index).$visible" editable-text="cell.value" e-form="getColumnForm(\'columnForm\' + $index)" e-name="{{\'text\' + tableModel.indexOf(rowObj)}}">{{cell.value}}</span>' +
+                  
                   // Fill up and down controls for column form
                   '<button type="button" ng-show="getColumnForm(\'columnForm\' + $index).$visible && tableModel.indexOf(rowObj) > 0" class="{{fillBtnClass}}" ng-click="fillLeft(tableModel.indexOf(rowObj), getColumnForm(\'columnForm\' + $index))">&#8593;</button>' +
                   '<button type="button" ng-show="getColumnForm(\'columnForm\' + $index).$visible && tableModel.indexOf(rowObj) < tableModel.length - 1" class="{{fillBtnClass}}" ng-click="fillRight(tableModel.indexOf(rowObj), getColumnForm(\'columnForm\' + $index))">&#8595;</button>' +
@@ -716,6 +729,8 @@ SOFTWARE.
         scope.showCheckbox = attrs.mtShowCheckbox === 'true' ? true : false;
         scope.checkboxCheckedText = attrs.mtCheckboxCheckedText;
         scope.checkboxUncheckedText = attrs.mtCheckboxUncheckedText;
+        scope.checkboxCheckedPosition = attrs.mtCheckboxCheckedPosition || 'left';
+        scope.checkboxUncheckedPosition = attrs.mtCheckboxUncheckedPosition || 'left';
 
         scope.startWatching();
 
