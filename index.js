@@ -196,7 +196,7 @@ SOFTWARE.
                   
                   // Bound checkbox label for when no forms are active, and 
                   // checkbox position is left
-                  '<span ng-show="(showCheckbox && !mt.busy) && ((cell.checked && checkboxCheckedPosition === \'left\') || (!cell.checked && checkboxUncheckedPosition === \'left\'))">{{cell.checked ? checkboxCheckedText : checkboxUncheckedText}}</span>&nbsp;' +
+                  '<span ng-show="(showCheckbox && !mt.busy) && ((cell.checked && checkboxCheckedTextPosition === \'left\') || (!cell.checked && checkboxUncheckedTextPosition === \'left\'))">{{cell.checked ? checkboxCheckedText : checkboxUncheckedText}}</span>&nbsp;' +
                   
                   // Bound cell value for display when no forms are active
                   '<span ng-show="!rowForm.$visible && !getColumnForm(\'columnForm\' + $index).$visible">{{cell.value}}</span>' + 
@@ -217,7 +217,7 @@ SOFTWARE.
                   
                   // Bound checkbox label for when no forms are active, and 
                   // checkbox position is right
-                  '<span ng-show="(showCheckbox && !mt.busy) && ((cell.checked && checkboxCheckedPosition === \'right\') || (!cell.checked && checkboxUncheckedPosition === \'right\'))">{{cell.checked ? checkboxCheckedText : checkboxUncheckedText}}</span>&nbsp;' +
+                  '<span ng-show="(showCheckbox && !mt.busy) && ((cell.checked && checkboxCheckedTextPosition === \'right\') || (!cell.checked && checkboxUncheckedTextPosition === \'right\'))">{{cell.checked ? checkboxCheckedText : checkboxUncheckedText}}</span>&nbsp;' +
                   
                   // Fill left and right controls for row form
                   '<button ng-show="rowForm.$visible && $index > 0" type="button" class="{{fillBtnClass}}" ng-click="fillLeft($index, rowForm)">&#8592;</button>' +
@@ -729,8 +729,8 @@ SOFTWARE.
         scope.showCheckbox = attrs.mtShowCheckbox === 'true' ? true : false;
         scope.checkboxCheckedText = attrs.mtCheckboxCheckedText;
         scope.checkboxUncheckedText = attrs.mtCheckboxUncheckedText;
-        scope.checkboxCheckedTextPosition = attrs.mtCheckboxCheckedPosition || 'left';
-        scope.checkboxUncheckedTextPosition = attrs.mtCheckboxUncheckedPosition || 'left';
+        scope.checkboxCheckedTextPosition = attrs.mtCheckboxCheckedTextPosition || 'left';
+        scope.checkboxUncheckedTextPosition = attrs.mtCheckboxUncheckedTextPosition || 'left';
 
         scope.startWatching();
 
