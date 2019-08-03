@@ -41,6 +41,76 @@ SOFTWARE.
   
   .module('mutable-table', ['xeditable'])
 
+/**
+  * Validators for rows, columns and cells.
+  * Mutable-table has error handling abilities similar to ngModel,
+  * except it is typeable, using arrays of objects intead of a hash of 
+  * arbitrariliy named properties commonly used by angularjs.
+  *
+  * To add a validator function, push to the corresponding array a ValidatorDefinition object: 
+  *
+  * type ValidatorDefinition = { name: string, validator: <T extends string | Cell>(v: T) => boolean, errorMessage: string }
+  * 
+  * If a validator function returns false, the errors hash will be updated
+  * with a property name matching the name of the validator that returned false, 
+  * 
+  * The errors arrays contain ValidationError types 
+  *
+  * type ValidationError = { name: string, errorMessage: string }
+  */
+  .value('mtValidator', function validatorFactory() {
+    return {
+      validators: {},
+      errors: {},
+      addValidatorFor: function addValidatorFor(target) {
+        var self = this;
+        return function addValidator(validatorDef) {
+          self.validators[target] = self.validators[target] || [];
+          if (!validatorDef.name || !validatorDef.validator) {
+            throw new Error('validator definition requires properties name and validator');
+          }
+          self.validators[target].push(validatorDef);
+        }
+      },
+      validateFor: function validateFor(target) {
+        var self = this;
+        this.validators[target] = this.validators[target] || [];
+        return function validate(val) {
+          self.errors[target] = self.errors[target] || [];
+          self.validators[target].forEach(function(validatorDef) {
+            var validator = validatorDef.validator,
+                name = validatorDef.name,
+                error = validatorDef.errorMessage;
+            if (false === validator(val)) {
+              self.errors[target].push({
+                name: name,
+                errorMessage: error
+              });
+            }
+          });
+        }
+      },
+      clearErrorsFor: function clearFor(target) {
+        var self = this;
+        return function clearErrors() {
+          delete self.errors[target];
+        }
+      },
+      // Helper that returns an object with all 3 main functions for a given target 
+      createValidatorFor: function createValidatorFor(target) {
+        var self = this;
+        return {
+          add: this.addValidatorFor(target),
+          validate: this.validateFor(target),
+          clear: this.clearErrorsFor(target),
+          get errors() {
+            return self.errors[target];
+          }
+        };
+      }
+    };
+  })
+
   .value('mtP2pLinkFactory', function() {
     return function(scope, elem, attr, [form]) {
       let parent, mtP2pNamespace;
@@ -756,19 +826,28 @@ SOFTWARE.
           self.xeditableFormActive = false;
           self.closeAllForms();
 
-          // Values are the same. Either the model was sorted, 
-          // or the table was just initialized.
+          // Values are the same during initialization
           if (newVal === oldVal) {
             return;
           }
-          // If strings are added to the columnHead or rowStub array..
           if (newLength > oldLength) {
             ctrl.addCells();
           }
-          // .. removed
           else if (newLength < oldLength) {
             ctrl.removeCells();
           }
+
+          if (newVal === ctrl.columnHeads) {
+            // TODO: Run column validation
+          
+          } 
+          else if (newVal === ctrl.rowStubs) {
+            // TODO: Run row validation
+
+          }
+          // TODO: Run cell validation
+
+
           resetLockedColumnsAndRows();
           ctrl.render();
         }
