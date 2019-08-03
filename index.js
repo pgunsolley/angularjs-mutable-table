@@ -58,7 +58,7 @@ SOFTWARE.
   *
   * type ValidationError = { name: string, errorMessage: string }
   */
-  .value('mtValidator', function validatorFactory() {
+  .value('mtValidation', function mtValidation() {
     return {
       validators: {},
       errors: {},
@@ -74,8 +74,8 @@ SOFTWARE.
       },
       validateFor: function validateFor(target) {
         var self = this;
-        this.validators[target] = this.validators[target] || [];
         return function validate(val) {
+          self.validators[target] = self.validators[target] || [];
           self.errors[target] = self.errors[target] || [];
           self.validators[target].forEach(function(validatorDef) {
             var validator = validatorDef.validator,
@@ -95,6 +95,9 @@ SOFTWARE.
         return function clearErrors() {
           delete self.errors[target];
         }
+      },
+      clear: function() {
+        this.errors = {};
       },
       // Helper that returns an object with all 3 main functions for a given target 
       createValidatorFor: function createValidatorFor(target) {
@@ -302,14 +305,14 @@ SOFTWARE.
           '</table>';
       return {
         restrict: 'E',
-        controller: ['$scope', '$attrs', '$timeout', controller],
+        controller: ['$scope', '$attrs', '$timeout', 'mtValidation', controller],
         scope: true,
         controllerAs: 'mt',
         link: link,
         template: template
       }
 
-      function controller($scope, $attrs, $timeout) {
+      function controller($scope, $attrs, $timeout, mtValidation) {
         var self = $attrs.name ? $scope.$parent[$attrs.name] = this : this,
         
         // @Private properties
@@ -324,7 +327,12 @@ SOFTWARE.
          * If false is returned, the action dependent on the hook return value 
          * will not execute.
          */
-        hooks = {};
+        hooks = {},
+        
+        /**
+         * Root validation instance
+         */
+        validatorRoot = mtValidation();
 
         // @Public properties
 
@@ -358,6 +366,16 @@ SOFTWARE.
             }
           }
         });
+
+        /**
+         * Validators that are checked on each digest cycle.
+         * See the link function.
+         */
+        self.validators = {
+          columns: validatorRoot.createValidatorFor('columns'),
+          rows: validatorRoot.createValidatorFor('rows'),
+          cells: validatorRoot.createValidatorFor('cells')
+        };
 
         /**
          * An array of strings that define the column heads.
@@ -399,6 +417,11 @@ SOFTWARE.
          */
         $scope.locks = { column: [], row: [], cells: [] };
         
+        /**
+         * Publish the root validators instance to the directive's scope
+         */
+        $scope.validatorRoot = validatorRoot;
+
         // @Public methods
 
         self.setHook = setHook;
@@ -837,17 +860,17 @@ SOFTWARE.
             ctrl.removeCells();
           }
 
+          // Perform validation; start by clearing prior validation errors
+          scope.validatorRoot.clear();
           if (newVal === ctrl.columnHeads) {
-            // TODO: Run column validation
-          
+            ctrl.validators.columns.validate(newVal);
           } 
           else if (newVal === ctrl.rowStubs) {
-            // TODO: Run row validation
-
+            ctrl.validators.rows.validate(newVal);
           }
-          // TODO: Run cell validation
-
-
+          ctrl.validators.cells.validate(ctrl.cells);
+          
+          // Reset active editable forms and render new model
           resetLockedColumnsAndRows();
           ctrl.render();
         }
