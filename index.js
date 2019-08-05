@@ -862,12 +862,8 @@ SOFTWARE.
 
           // Perform validation; start by clearing prior validation errors
           scope.validatorRoot.clear();
-          if (newVal === ctrl.columnHeads) {
-            ctrl.validators.columns.validate(newVal);
-          } 
-          else if (newVal === ctrl.rowStubs) {
-            ctrl.validators.rows.validate(newVal);
-          }
+          ctrl.validators.columns.validate(ctrl.columnHeads);
+          ctrl.validators.rows.validate(ctrl.rowStubs);
           ctrl.validators.cells.validate(ctrl.cells);
           
           // Reset active editable forms and render new model
