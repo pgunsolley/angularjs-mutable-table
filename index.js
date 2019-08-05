@@ -84,7 +84,7 @@ SOFTWARE.
             if (false === validator(val)) {
               self.errors[target].push({
                 name: name,
-                errorMessage: error
+                errorMessage: error || 'There was an error'
               });
             }
           });
