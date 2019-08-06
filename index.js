@@ -362,6 +362,11 @@ SOFTWARE.
                 cells: angular.copy($scope.locks.cells)
               };
             }
+          },
+          errors: {
+            get: function() {
+              return validatorRoot.errors;
+            }
           }
         });
 
