@@ -23,9 +23,6 @@ SOFTWARE.
 // TODO: Add ability to remove "REMOVE" buttons on columns, rows and both 
 // TODO: Add ability to transclude special directives into specific locations within the template
 // TODO: Maybe add a special property to each cell for custom data (like { meta: {} }))
-
-'use strict';
-
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['angular'], factory);
@@ -37,6 +34,8 @@ SOFTWARE.
     root.returnExports = factory(root.angular);
   }
 })(typeof self !== 'undefined' ? self : this, function(angular) {
+  'use strict';
+
   angular
   
   .module('mutable-table', ['xeditable'])
