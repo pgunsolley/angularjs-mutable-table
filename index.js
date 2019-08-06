@@ -830,7 +830,8 @@ SOFTWARE.
         function startWatching() {
           this.dereg = [
             this.$watch('mt.columnHeads', rowStubOrColumnHeadChange.bind(scope), true),
-            this.$watch('mt.rowStubs', rowStubOrColumnHeadChange.bind(scope), true)
+            this.$watch('mt.rowStubs', rowStubOrColumnHeadChange.bind(scope), true),
+            this.$watch('mt.cells', cellChange, true)
           ];
         }
         
@@ -840,6 +841,11 @@ SOFTWARE.
           });
         }
         
+        function cellChange() {
+          ctrl.validators.cells.clear();
+          ctrl.validators.cells.validate(ctrl.cells);
+        }
+
         // Main handler for row or column changes.
         function rowStubOrColumnHeadChange(newVal, oldVal) {
           let self = this,
