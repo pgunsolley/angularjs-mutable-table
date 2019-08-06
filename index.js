@@ -37,7 +37,6 @@ SOFTWARE.
   'use strict';
 
   angular
-  
   .module('mutable-table', ['xeditable'])
 
 /**
@@ -65,8 +64,8 @@ SOFTWARE.
         var self = this;
         return function addValidator(validatorDef) {
           self.validators[target] = self.validators[target] || [];
-          if (!validatorDef.name || !validatorDef.validator) {
-            throw new Error('validator definition requires properties name and validator');
+          if (typeof validatorDef.validator !== 'function' || !validatorDef.validator.call) {
+            throw new Error('You must provide a validator function');
           }
           self.validators[target].push(validatorDef);
         }
