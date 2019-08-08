@@ -619,8 +619,6 @@ SOFTWARE.
                   value: ''
                 });
               }
-              // TODO: Consider removing this logic and just using 
-              // a watch expression.
               // If cell belongs to a locked column or row, store 
               // it in locks.cells
               if (
