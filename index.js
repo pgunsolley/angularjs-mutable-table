@@ -281,10 +281,10 @@ SOFTWARE.
                   '<span ng-show="showCheckbox && rowForm.$visible">{{rowForm.$data[\'checkbox\' + $index] ? checkboxCheckedText : checkboxUncheckedText}}</span>' +
                   
                   // Bound editable text for row form
-                  '<span ng-show="rowForm.$visible" editable-text="cell.value" e-form="rowForm" e-name="{{\'text\' + $index}}">{{cell.value}}</span>' + 
+                  '<span ng-show="rowForm.$visible" editable-text="cell.value" e-form="rowForm" e-name="{{\'text\' + $index}}" onbeforesave="validateBeforeSave(getScope().$parent, {$data: $data, cell: cell})">{{cell.value}}</span>' + 
                   
                   // Bound editable text for column form
-                  '<span ng-show="getColumnForm(\'columnForm\' + $index).$visible" editable-text="cell.value" e-form="getColumnForm(\'columnForm\' + $index)" e-name="{{\'text\' + tableModel.indexOf(rowObj)}}">{{cell.value}}</span>' +
+                  '<span ng-show="getColumnForm(\'columnForm\' + $index).$visible" editable-text="cell.value" e-form="getColumnForm(\'columnForm\' + $index)" e-name="{{\'text\' + tableModel.indexOf(rowObj)}}" onbeforesave="validateBeforeSave(getScope().$parent, {$data: $data, cell: cell})">{{cell.value}}</span>' +
                   
                   // Bound checkbox label for when no forms are active, and 
                   // checkbox position is right
@@ -798,23 +798,26 @@ SOFTWARE.
         scope.fillBtnClass = attrs.mtBtnClass || attrs.mtFillBtnClass || "";
         
         // Disable the edit buttons
-        scope.disableEdit = editOrRemoveActionExpressionFactory(attrs.mtDisableEdit);
-        scope.disableEditColumns = editOrRemoveActionExpressionFactory(attrs.mtDisableEditColumns, {
+        scope.disableEdit = expressionFactory(attrs.mtDisableEdit);
+        scope.disableEditColumns = expressionFactory(attrs.mtDisableEditColumns, {
           $columnHeads: ctrl.columnHeads
         });
-        scope.disableEditRows = editOrRemoveActionExpressionFactory(attrs.mtDisableEditRows, {
+        scope.disableEditRows = expressionFactory(attrs.mtDisableEditRows, {
           $rowStubs: ctrl.rowStubs
         });
 
         // TODO: Maybe swap words "disableRemove" with "lock" to be more consistent with new lock feature.
-        scope.disableRemoveColumns = editOrRemoveActionExpressionFactory(attrs.mtDisableRemoveColumns, {
+        scope.disableRemoveColumns = expressionFactory(attrs.mtDisableRemoveColumns, {
           $columnHeads: ctrl.columnHeads
         });
-        scope.disableRemoveRows = editOrRemoveActionExpressionFactory(attrs.mtDisableRemoveRows, {
+        scope.disableRemoveRows = expressionFactory(attrs.mtDisableRemoveRows, {
           $rowStubs: ctrl.rowStubs
         });
-        scope.disableRemove = editOrRemoveActionExpressionFactory(attrs.mtDisableRemove);
+        scope.disableRemove = expressionFactory(attrs.mtDisableRemove);
         
+        // xeditable onbeforesave validator
+        scope.validateBeforeSave = $parse(attrs.mtValidateBeforeSave);
+
         // Set transform expressions for the column head/row stub prefixes
         scope.columnHeadPrefixTransform = attrs.mtColumnHeadPrefixTransform;
         scope.rowStubPrefixTransform = attrs.mtRowStubPrefixTransform;
@@ -977,9 +980,12 @@ SOFTWARE.
       /**
         * Parse an optional expression. If a string is passed, 
         * evaluate it with $parse, otherwise just return false;
+        *
+        * Only use when you can pass locals accessible in link, controller, etc.
+        * If the required locals are only accessible in the template, just us $parse manually.
         * @param {*} optionalExp 
         */
-        function editOrRemoveActionExpressionFactory(optionalExp, locals) {
+        function expressionFactory(optionalExp, locals) {
           return function() {
             if (optionalExp) {
               return $parse(optionalExp)(scope.$parent, locals);
