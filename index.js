@@ -460,7 +460,9 @@ SOFTWARE.
             'beforeRemove',
             'afterRemove',
             'afterCancel',
-            'afterInitFromCells'
+            'afterInitFromCells',
+            'beforeRender',
+            'afterRender'
           ].forEach(function(hookName) {
             hooks[hookName] = function() {};
           });
@@ -684,8 +686,10 @@ SOFTWARE.
           let cells = self.cells,
               columnHeads = self.columnHeads,
               rowStubs = self.rowStubs,
-              tableModel = $scope.tableModel = [];
-          
+              tableModel;
+          // Do things before rendering the model.
+          hooks.beforeRender();
+          tableModel = $scope.tableModel = [];
           for (let r = 0; r < rowStubs.length; ++r) {
             // Build row object
             tableModel[r] = {
@@ -704,6 +708,8 @@ SOFTWARE.
               }
             }
           }
+          // Do things after rendering the view model
+          hooks.afterRender();
         }
         
         /**
@@ -725,9 +731,7 @@ SOFTWARE.
             if (self.rowStubs.indexOf(cell.rowStub) === -1) {
               self.rowStubs.push(cell.rowStub);
             }
-          });
-          // TODO: Call afterInitFromCells hook
-          
+          });          
           self.render();
           $scope.startWatching();
         }
