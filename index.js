@@ -731,7 +731,7 @@ SOFTWARE.
          */
         function initFromCells(cells) {
           hooks.beforeInit();
-          $scope.stopWatching();
+          //$scope.stopWatching();
           self.columnHeads = [];
           self.rowStubs = [];
           storeLockedCells(cells);
@@ -749,7 +749,7 @@ SOFTWARE.
           });
           hooks.afterInit();
           self.render();
-          $scope.startWatching();
+          //$scope.startWatching();
         }
 
         // Higher order function. targetNS (forgot what Ns meant huehue)
