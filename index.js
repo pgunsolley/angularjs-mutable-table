@@ -730,7 +730,7 @@ SOFTWARE.
          * Initialize the table with a passed array of cells.
          */
         function initFromCells(cells) {
-          hooks.beforeInit(cells);
+          hooks.beforeInit();
           $scope.stopWatching();
           self.columnHeads = [];
           self.rowStubs = [];
@@ -747,7 +747,7 @@ SOFTWARE.
               self.rowStubs.push(cell.rowStub);
             }
           });
-          hooks.afterInit(cells);
+          hooks.afterInit();
           self.render();
           $scope.startWatching();
         }
