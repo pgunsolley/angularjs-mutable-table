@@ -731,25 +731,25 @@ SOFTWARE.
          */
         function initFromCells(cells) {
           hooks.beforeInit();
-          $scope.stopWatching();
           self.columnHeads = [];
           self.rowStubs = [];
-          storeLockedCells(cells);
-          self.cells = cells.concat(self.locks.cells);
-          self.cells.forEach(function(cell) {
-            if (!cell.columnHead || !cell.rowStub) {
-              throw new MutableTableError('Unable to initialize table; invalid cell structure detected.');
-            }
-            if (self.columnHeads.indexOf(cell.columnHead) === -1) {
-              self.columnHeads.push(cell.columnHead);
-            }
-            if (self.rowStubs.indexOf(cell.rowStub) === -1) {
-              self.rowStubs.push(cell.rowStub);
-            }
+          $timeout(function() {
+            storeLockedCells(cells);
+            self.cells = cells.concat(self.locks.cells);
+            self.cells.forEach(function(cell) {
+              if (!cell.columnHead || !cell.rowStub) {
+                throw new MutableTableError('Unable to initialize table; invalid cell structure detected.');
+              }
+              if (self.columnHeads.indexOf(cell.columnHead) === -1) {
+                self.columnHeads.push(cell.columnHead);
+              }
+              if (self.rowStubs.indexOf(cell.rowStub) === -1) {
+                self.rowStubs.push(cell.rowStub);
+              }
+            });
+            hooks.afterInit();
+            self.render();
           });
-          hooks.afterInit();
-          self.render();
-          $scope.startWatching();
         }
 
         // Higher order function. targetNS (forgot what Ns meant huehue)
