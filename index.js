@@ -36,6 +36,18 @@ SOFTWARE.
 })(typeof self !== 'undefined' ? self : this, function(angular) {
   'use strict';
 
+  // Base error object
+  var MutableTableError = (function() {
+    function MutableTableError(msg, fn, ln) {
+      this.message = msg;
+      this.fileName = fn;
+      this.lineNumber = ln;
+    }
+    MutableTableError.prototype = Object.create(Error.prototype);
+    MutableTableError.prototype.constructor = MutableTableError;
+    return MutableTableError;
+  })();
+
   angular
   .module('mutable-table', ['xeditable'])
 
@@ -65,7 +77,7 @@ SOFTWARE.
         return function addValidator(validatorDef) {
           self.validators[target] = self.validators[target] || [];
           if (typeof validatorDef.validator !== 'function' || !validatorDef.validator.call) {
-            throw new Error('You must provide a validator function');
+            throw new MutableTableError('You must provide a validator function');
           }
           self.validators[target].push(validatorDef);
         }
@@ -116,7 +128,7 @@ SOFTWARE.
     return function(scope, elem, attr, [form]) {
       let parent, mtP2pNamespace;
       if (!attr.mtP2pNamespace || attr.mtP2pNamespace === "") {
-        throw new Error('mt-p2p-namespace attribute is required');
+        throw new MutableTableError('mt-p2p-namespace attribute is required');
       }
       parent = scope.$parent;
       mtP2pNamespace = attr.mtP2pNamespace;
@@ -197,7 +209,7 @@ SOFTWARE.
 
       function link(scope, elem, attrs, mtMutableTable) {
         if (!attrs.mtLockColumns) {
-          throw new Error('attribute mt-lock-columns must have a value');
+          throw new MutableTableError('attribute mt-lock-columns must have a value');
         }
         $timeout(function() {
           attrs.mtLockColumns.split('|').forEach(function(val) {
@@ -219,7 +231,7 @@ SOFTWARE.
 
       function link(scope, elem, attrs, mtMutableTable) {
         if (!attrs.mtLockRows) {
-          throw new Error('attribute mt-lock-rows must have a value');
+          throw new MutableTableError('attribute mt-lock-rows must have a value');
         }
         $timeout(function() {
           attrs.mtLockRows.split('|').forEach(function(val) {
@@ -478,10 +490,10 @@ SOFTWARE.
          */
         function setHook(name, func) {
           if (typeof func !== 'function') {
-            throw new Error('Hook must be typeof "function"');
+            throw new MutableTableError('Hook must be typeof "function"');
           }
           if (!hooks[name]) {
-            throw new Error('Unknown hook ' + name);
+            throw new MutableTableError('Unknown hook ' + name);
           }
           hooks[name] = function() { 
             return func.apply(self, Array.prototype.slice.call(arguments));
@@ -726,7 +738,7 @@ SOFTWARE.
           self.cells = cells.concat(self.locks.cells);
           self.cells.forEach(function(cell) {
             if (!cell.columnHead || !cell.rowStub) {
-              throw new Error('Unable to initialize table; invalid cell structure detected.');
+              throw new MutableTableError('Unable to initialize table; invalid cell structure detected.');
             }
             if (self.columnHeads.indexOf(cell.columnHead) === -1) {
               self.columnHeads.push(cell.columnHead);
