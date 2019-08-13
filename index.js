@@ -450,13 +450,17 @@ SOFTWARE.
 
         initHooks();
 
+        /**
+         * Setup the hooks 
+         */
         function initHooks() {
           hooks = {};
           [
             'afterSave',
             'beforeRemove',
             'afterRemove',
-            'afterCancel'
+            'afterCancel',
+            'afterInitFromCells'
           ].forEach(function(hookName) {
             hooks[hookName] = function() {};
           });
@@ -619,19 +623,25 @@ SOFTWARE.
                   value: ''
                 });
               }
-              // If cell belongs to a locked column or row, store 
-              // it in locks.cells
-              if (
-                self.isLockedColumn(columnHeads[c]) 
-                && self.isLockedRow(rowStubs[r])
-                && !findCellFor(columnHeads[c], rowStubs[r], $scope.locks.cells)
-              ) {
-                $scope.locks.cells.push(cells[cells.length - 1]);
-              }
             }
           } 
+          storeLockedCells(cells);
         }
         
+        function storeLockedCells(cells) {
+          cells.forEach(function(c) {
+            var ch = c.columnHead,
+                rs = c.rowStub;
+            if (
+              (self.isLockedColumn(ch) 
+              || self.isLockedRow(rs))
+              && !findCellFor(ch, rs, $scope.locks.cells)
+            ) {
+              $scope.locks.cells.push(c);
+            }
+          });
+        }
+
         /**
          * A recursive function that remove cells by startIndex.
          * An array of removed cells may be optionally passed
@@ -646,19 +656,14 @@ SOFTWARE.
           removed = removed || [];
           for (let cc = startIndex || 0; cc < cells.length; ++cc) {
             if (
-              // If the cell belongs to a missing row or column,
-              // that means the cell should be remove. 
-              // If the cell belongs to a locked column or row, 
-              // then it shouldn't be removed. 
-              // This checks the columnHeads and rowStubs arrays 
-              // for the corresponding columnHead and rowStub.
               (
+                // Check if the columnHead that the cell belongs no longer exists
                 columnHeads.indexOf(cells[cc].columnHead) === -1
+                // Or if the rowStub that the cell belongs to no longer exists
                 || rowStubs.indexOf(cells[cc].rowStub) === -1
               )
-
-              // Prevents removal of cells that correspond to 
-              // locked columns or rows
+              // And checks if the corresponding columnHead or rowStub do not 
+              // belong to locked rows/columns
               && !(
                 self.isLockedColumn(cells[cc].columnHead)
                 || self.isLockedRow(cells[cc].rowStub)
@@ -708,7 +713,8 @@ SOFTWARE.
           $scope.stopWatching();
           self.columnHeads = [];
           self.rowStubs = [];
-          self.cells = cells;
+          storeLockedCells(cells);
+          self.cells = cells.concat(self.locks.cells);
           self.cells.forEach(function(cell) {
             if (!cell.columnHead || !cell.rowStub) {
               throw new Error('Unable to initialize table; invalid cell structure detected.');
@@ -720,6 +726,8 @@ SOFTWARE.
               self.rowStubs.push(cell.rowStub);
             }
           });
+          // TODO: Call afterInitFromCells hook
+          
           self.render();
           $scope.startWatching();
         }
