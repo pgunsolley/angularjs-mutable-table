@@ -462,7 +462,9 @@ SOFTWARE.
             'afterCancel',
             'afterInitFromCells',
             'beforeRender',
-            'afterRender'
+            'afterRender',
+            'beforeInit',
+            'afterInit'
           ].forEach(function(hookName) {
             hooks[hookName] = function() {};
           });
@@ -716,6 +718,7 @@ SOFTWARE.
          * Initialize the table with a passed array of cells.
          */
         function initFromCells(cells) {
+          hooks.beforeInit(cells);
           $scope.stopWatching();
           self.columnHeads = [];
           self.rowStubs = [];
@@ -731,7 +734,8 @@ SOFTWARE.
             if (self.rowStubs.indexOf(cell.rowStub) === -1) {
               self.rowStubs.push(cell.rowStub);
             }
-          });          
+          });
+          hooks.afterInit(cells);
           self.render();
           $scope.startWatching();
         }
