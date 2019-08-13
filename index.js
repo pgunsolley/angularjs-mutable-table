@@ -646,7 +646,12 @@ SOFTWARE.
           removed = removed || [];
           for (let cc = startIndex || 0; cc < cells.length; ++cc) {
             if (
-              // If the cell belongs to a missing row or column
+              // If the cell belongs to a missing row or column,
+              // that means the cell should be remove. 
+              // If the cell belongs to a locked column or row, 
+              // then it shouldn't be removed. 
+              // This checks the columnHeads and rowStubs arrays 
+              // for the corresponding columnHead and rowStub.
               (
                 columnHeads.indexOf(cells[cc].columnHead) === -1
                 || rowStubs.indexOf(cells[cc].rowStub) === -1
