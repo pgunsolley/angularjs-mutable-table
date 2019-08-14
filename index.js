@@ -643,17 +643,18 @@ SOFTWARE.
           } 
           storeLockedCells(cells);
         }
-        
+
         function storeLockedCells(cells) {
           cells.forEach(function(c) {
             var ch = c.columnHead,
-                rs = c.rowStub;
+                rs = c.rowStub,
+                cellSearchResult;
             if (
               (self.isLockedColumn(ch) 
               || self.isLockedRow(rs))
-              && !findCellFor(ch, rs, $scope.locks.cells)
             ) {
-              $scope.locks.cells.push(c);
+              cellSearchResult = findCellFor(ch, rs, $scope.locks.cells);
+              $scope.locks.cells.splice(cellSearchResult.index, +!!cellSearchResult.cell, c);
             }
           });
         }
@@ -701,7 +702,6 @@ SOFTWARE.
               columnHeads = self.columnHeads,
               rowStubs = self.rowStubs,
               tableModel;
-          // Do things before rendering the model.
           hooks.beforeRender();
           tableModel = $scope.tableModel = [];
           for (let r = 0; r < rowStubs.length; ++r) {
@@ -722,7 +722,6 @@ SOFTWARE.
               }
             }
           }
-          // Do things after rendering the view model
           hooks.afterRender();
         }
         
@@ -731,25 +730,34 @@ SOFTWARE.
          */
         function initFromCells(cells) {
           hooks.beforeInit();
-          $scope.stopWatching();
           self.columnHeads = [];
           self.rowStubs = [];
-          storeLockedCells(cells);
-          self.cells = cells.concat(self.locks.cells);
-          self.cells.forEach(function(cell) {
-            if (!cell.columnHead || !cell.rowStub) {
-              throw new MutableTableError('Unable to initialize table; invalid cell structure detected.');
-            }
-            if (self.columnHeads.indexOf(cell.columnHead) === -1) {
-              self.columnHeads.push(cell.columnHead);
-            }
-            if (self.rowStubs.indexOf(cell.rowStub) === -1) {
-              self.rowStubs.push(cell.rowStub);
+          $timeout(function() {
+            // At this point, any new cells that would correspond to columnHeads or rowStubs
+            // should be removed (unless they are locked).
+
+            // Now lock any new cells that correspond to locked columnHeads or rowStubs
+            storeLockedCells(cells);
+            // Then reset the cells
+            self.cells = cells;
+            applyCells(self.cells);
+            hooks.afterInit();
+            self.render();
+
+            function applyCells(cells) {
+              cells.forEach(function(cell) {
+                if (!cell.columnHead || !cell.rowStub) {
+                  throw new MutableTableError('Unable to initialize table; invalid cell structure detected.');
+                }
+                if (self.columnHeads.indexOf(cell.columnHead) === -1) {
+                  self.columnHeads.push(cell.columnHead);
+                }
+                if (self.rowStubs.indexOf(cell.rowStub) === -1) {
+                  self.rowStubs.push(cell.rowStub);
+                }
+              });
             }
           });
-          hooks.afterInit();
-          self.render();
-          $scope.startWatching();
         }
 
         // Higher order function. targetNS (forgot what Ns meant huehue)
@@ -789,9 +797,13 @@ SOFTWARE.
         }
 
         function findCellFor(columnHead, rowStub, searchIn) {
-          return searchIn.filter(function(cell) {
+          var cell = searchIn.filter(function(cell) {
             return cell.columnHead === columnHead && cell.rowStub === rowStub;
           })[0];
+          return {
+            cell: cell,
+            index: searchIn.indexOf(cell)
+          };
         }
       }
       
