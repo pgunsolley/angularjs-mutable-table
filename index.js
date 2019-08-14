@@ -644,19 +644,36 @@ SOFTWARE.
           storeLockedCells(cells);
         }
 
-        function storeLockedCells(cells) {
-          cells.forEach(function(c) {
-            var ch = c.columnHead,
-                rs = c.rowStub,
-                cellSearchResult;
-            if (
-              (self.isLockedColumn(ch) 
-              || self.isLockedRow(rs))
-            ) {
-              cellSearchResult = findCellFor(ch, rs, $scope.locks.cells);
-              $scope.locks.cells.splice(cellSearchResult.index, +!!cellSearchResult.cell, c);
+        /**
+         * Store a cell in the $scope.locks.cells cache.
+         * Pass true as the 2nd argmument to have the locked cells 
+         * removed from the original source array (argument 1).
+         * 
+         * @param {*} cells 
+         * @param {*} removeFromSrc 
+         */
+        function storeLockedCells(cells, removeFromSrcArr) {
+          worker(0);
+          function worker(currentIdx) {
+            var c, ch, rs, cellSearchResult;
+            for (var i = currentIdx; i < cells.length; ++i) {
+              c = cells[i];
+              ch = c.columnHead;
+              rs = c.rowStub;
+              if (
+                self.isLockedColumn(ch) 
+                && self.isLockedRow(rs)
+              ) {
+                cellSearchResult = findCellFor(ch, rs, $scope.locks.cells);
+                $scope.locks.cells.splice(cellSearchResult.index, +!!cellSearchResult.cell, c);
+                // If we need to remove locked cell from original array:
+                if (removeFromSrcArr === true) {
+                  cells.splice(i, 1);
+                  worker(i);
+                }
+              }
             }
-          });
+          }
         }
 
         /**
