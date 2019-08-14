@@ -441,6 +441,7 @@ SOFTWARE.
 
         self.setHook = setHook;
         self.removeHook = removeHook;
+        self.init = init;
         self.initFromCells = initFromCells;
         self.addColumn = addColumn;
         self.removeColumn = removeColumn;
@@ -742,6 +743,18 @@ SOFTWARE.
           hooks.afterRender();
         }
         
+        /**
+         * Initialize using the existing cells.
+         * This is useful for when you modify the cells directly and 
+         * need to re-render the table.
+         * NOTE: A simple watch expression could handle this task reactively,
+         * however it's not a common case, so I've left it to this method 
+         * and the consumer to call it manually after altering the cells.
+         */
+        function init() {
+          initFromCells(self.cells);
+        }
+
         /**
          * Initialize the table with a passed array of cells.
          */
