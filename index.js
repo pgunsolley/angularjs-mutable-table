@@ -754,9 +754,11 @@ SOFTWARE.
             // should be removed (unless they are locked).
 
             // Now lock any new cells that correspond to locked columnHeads or rowStubs
-            storeLockedCells(cells);
+            // By passing true as the 2nd arg, we are also removing those cells from 
+            // the original array (to prevent duplicates when we concatenate the arrays afterward).
+            storeLockedCells(cells, true);
             // Then reset the cells
-            self.cells = cells;
+            self.cells = cells.concat($scope.locks.cells);
             applyCells(self.cells);
             hooks.afterInit();
             self.render();
