@@ -140,29 +140,6 @@ SOFTWARE.
     }
   })
 
-  .factory('mtDefaultVectorDirectiveFactory', [
-    '$timeout',
-    function mtDefaultVectorDirectiveFactoryFactory($timeout) {
-      return function mtDefaultVectorDirectiveFactory(config) {
-        var target = config.target;
-        return {
-          restrict: 'A',
-          require: 'mtMutableTable',
-          link: link
-        };
-        function link(scope, elem, attrs, mtMutableTable) {
-          $timeout(function() {
-            attrs.mtDefaultColumns.split('|').forEach(function(val) {
-              if (mtMutableTable[target].indexOf(val) < 0) {
-                mtMutableTable[target].push(val);
-              }
-            });
-          });
-        }
-      }
-    }
-  ])
-
   .directive('mtP2pForm', [
     'mtP2pLinkFactory',
     function mtP2pFormFactory(mtP2pLinkFactory) {
@@ -174,11 +151,69 @@ SOFTWARE.
     }
   ])
 
+  .factory('mtDefaultVectorDirectiveFactory', [
+    '$timeout',
+    function mtDefaultVectorDirectiveFactoryFactory($timeout) {
+      return function mtDefaultVectorDirectiveFactory(config) {
+        var attribute = config.attribute,
+            target = config.target;
+        return {
+          restrict: 'A',
+          require: 'mtMutableTable',
+          link: link
+        };
+        function link(scope, elem, attrs, mtMutableTable) {
+          $timeout(function() {
+            attrs[attribute].split('|').forEach(function(val) {
+              // If the string is a valid <target>, push it on 
+              // link.
+              if (mtMutableTable[target].indexOf(val) < 0) {
+                mtMutableTable[target].push(val);
+              }
+            });
+          });
+        }
+      }
+    }
+  ])
+
+  .factory('mtLockVectorDirectiveFactory', [
+    '$timeout',
+    function mtLockVectorDirectiveFactoryFactory($timeout) {
+      return function mtLockVectorDirectiveFactory(config) {
+        var attribute = config.attribute;
+        return {
+          restrict: 'A',
+          require: 'mtMutableTable',
+          link: link
+        };
+        function link(scope, elem, attrs, mtMutableTable) {
+          if (!attrs[attribute]) {
+            throw new MutableTableError('Missing attribute');
+          }
+          $timeout(function() {
+            attrs[attribute].split('|').forEach(function(val) {
+              switch (attribute) {
+                case 'columnHeads': 
+                  mtMutableTable.lockColumn(val);
+                  break;
+                case 'rowStubs':
+                  mtMutableTable.lockRow(val);
+                  break;
+              }
+            });
+          });
+        }
+      }
+    }
+  ])
+
   .directive('mtDefaultColumns', [
     'mtDefaultVectorDirectiveFactory',
     function mtDefaultColumnsFactory(mtDefaultVectorDirectiveFactory) {
       return mtDefaultVectorDirectiveFactory({
-        target: 'columnHeads'
+        target: 'columnHeads',
+        attribute: 'mtDefaultColumns'
       });
     }
   ])
@@ -187,52 +222,27 @@ SOFTWARE.
     'mtDefaultVectorDirectiveFactory',
     function mtDefaultRowsFactory(mtDefaultVectorDirectiveFactory) {
       return mtDefaultVectorDirectiveFactory({
-        target: 'rowStubs'
+        target: 'rowStubs',
+        attribute: 'mtDefaultRows'
       });
     }
   ])
 
   .directive('mtLockColumns', [
     '$timeout',
-    function mtLockColumnsFactory($timeout) {
-      return {
-        restrict: 'A',
-        require: 'mtMutableTable',
-        link: link
-      };
-
-      function link(scope, elem, attrs, mtMutableTable) {
-        if (!attrs.mtLockColumns) {
-          throw new MutableTableError('attribute mt-lock-columns must have a value');
-        }
-        $timeout(function() {
-          attrs.mtLockColumns.split('|').forEach(function(val) {
-            mtMutableTable.lockColumn(val);
-          });
-        });
-      }
+    function mtLockColumnsFactory(mtLockVectorDirectiveFactory) {
+      return mtLockVectorDirectiveFactory({
+        attribute: 'mtLockColumns'
+      });
     }
   ])
 
   .directive('mtLockRows', [
-    '$timeout', 
-    function mtLockRowsFactory($timeout) {
-      return {
-        restrict: 'A',
-        require: 'mtMutableTable',
-        link: link
-      };
-
-      function link(scope, elem, attrs, mtMutableTable) {
-        if (!attrs.mtLockRows) {
-          throw new MutableTableError('attribute mt-lock-rows must have a value');
-        }
-        $timeout(function() {
-          attrs.mtLockRows.split('|').forEach(function(val) {
-            mtMutableTable.lockRow(val);
-          });
-        });
-      }
+    'mtLockVectorDirectiveFactory', 
+    function mtLockRowsFactory(mtLockVectorDirectiveFactory) {
+      return mtLockVectorDirectiveFactory({
+        attribute: 'mtLockRows'
+      });
     }
   ])
 
@@ -407,6 +417,8 @@ SOFTWARE.
          * }
          */
         self.cells = [];
+
+        self.defaultValue = "";
         
         // @Protected properties (not published on parent scope)
         
@@ -631,7 +643,7 @@ SOFTWARE.
                 cells.push({
                   columnHead: columnHeads[c],
                   rowStub: rowStubs[r],
-                  value: ''
+                  value: self.defaultValue
                 });
               }
             }
@@ -900,6 +912,7 @@ SOFTWARE.
         scope.checkboxUncheckedText = attrs.mtCheckboxUncheckedText;
         scope.checkboxCheckedTextPosition = attrs.mtCheckboxCheckedTextPosition || 'left';
         scope.checkboxUncheckedTextPosition = attrs.mtCheckboxUncheckedTextPosition || 'left';
+        
 
         scope.startWatching();
 
