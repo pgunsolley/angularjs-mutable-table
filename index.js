@@ -144,21 +144,21 @@ SOFTWARE.
     '$timeout',
     function mtDefaultVectorDirectiveFactoryFactory($timeout) {
       return function mtDefaultVectorDirectiveFactory(config) {
-        // Configurations:
         var target = config.target;
         return {
           restrict: 'A',
           require: 'mtMutableTable',
-          link: function mtDefaultVectorLink(scope, elem, attrs, mtMutableTable) {
-            $timeout(function() {
-              attrs.mtDefaultColumns.split('|').forEach(function(val) {
-                if (mtMutableTable[target].indexOf(val) < 0) {
-                  mtMutableTable[target].push(val);
-                }
-              });
-            });
-          }
+          link: link
         };
+        function link(scope, elem, attrs, mtMutableTable) {
+          $timeout(function() {
+            attrs.mtDefaultColumns.split('|').forEach(function(val) {
+              if (mtMutableTable[target].indexOf(val) < 0) {
+                mtMutableTable[target].push(val);
+              }
+            });
+          });
+        }
       }
     }
   ])
@@ -175,8 +175,8 @@ SOFTWARE.
   ])
 
   .directive('mtDefaultColumns', [
-    'mtDefaultVectorLinkFactory',
-    function mtDefaultColumnsFactory(mtDefaultVectorLinkFactory) {
+    'mtDefaultVectorDirectiveFactory',
+    function mtDefaultColumnsFactory(mtDefaultVectorDirectiveFactory) {
       return mtDefaultVectorDirectiveFactory({
         target: 'columnHeads'
       });
@@ -184,9 +184,9 @@ SOFTWARE.
   ])
 
   .directive('mtDefaultRows', [ 
-    'mtDefaultVectorLinkFactory',
-    function mtDefaultRowsFactory(mtDefaultVectorLinkFactory) {
-      return mtDefaultVectorLinkFactory({
+    'mtDefaultVectorDirectiveFactory',
+    function mtDefaultRowsFactory(mtDefaultVectorDirectiveFactory) {
+      return mtDefaultVectorDirectiveFactory({
         target: 'rowStubs'
       });
     }
