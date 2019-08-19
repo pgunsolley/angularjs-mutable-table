@@ -124,7 +124,7 @@ SOFTWARE.
     };
   })
 
-  .value('mtP2pLinkFactory', function() {
+  .value('mtP2pLinkFactory', function mtP2pLinkFactoryFactory() {
     return function(scope, elem, attr, [form]) {
       let parent, mtP2pNamespace;
       if (!attr.mtP2pNamespace || attr.mtP2pNamespace === "") {
@@ -140,6 +140,29 @@ SOFTWARE.
     }
   })
 
+  .factory('mtDefaultVectorDirectiveFactory', [
+    '$timeout',
+    function mtDefaultVectorDirectiveFactoryFactory($timeout) {
+      return function mtDefaultVectorDirectiveFactory(config) {
+        // Configurations:
+        var target = config.target;
+        return {
+          restrict: 'A',
+          require: 'mtMutableTable',
+          link: function mtDefaultVectorLink(scope, elem, attrs, mtMutableTable) {
+            $timeout(function() {
+              attrs.mtDefaultColumns.split('|').forEach(function(val) {
+                if (mtMutableTable[target].indexOf(val) < 0) {
+                  mtMutableTable[target].push(val);
+                }
+              });
+            });
+          }
+        };
+      }
+    }
+  ])
+
   .directive('mtP2pForm', [
     'mtP2pLinkFactory',
     function mtP2pFormFactory(mtP2pLinkFactory) {
@@ -151,50 +174,21 @@ SOFTWARE.
     }
   ])
 
-  // TODO: Make the required directives more dry since they share
-  // a lot of functionality 
-  // TODO: Rename 'required' to 'default'...
-  // they aren't really required... why did I call it that?
   .directive('mtDefaultColumns', [
-    '$timeout',
-    function mtDefaultColumnsFactory($timeout) {
-      return {
-        restrict: 'A',
-        require: 'mtMutableTable',
-        link: link
-      };
-
-      function link(scope, elem, attrs, mtMutableTable) {
-        $timeout(function() {
-          attrs.mtDefaultColumns.split('|').forEach(function(val) {
-            if (mtMutableTable.columnHeads.indexOf(val) < 0) {
-              mtMutableTable.columnHeads.push(val);
-            }
-          });
-        });
-      }
+    'mtDefaultVectorLinkFactory',
+    function mtDefaultColumnsFactory(mtDefaultVectorLinkFactory) {
+      return mtDefaultVectorDirectiveFactory({
+        target: 'columnHeads'
+      });
     }
   ])
 
-  // TODO: Make dry with requiredColumn ^
   .directive('mtDefaultRows', [ 
-    '$timeout',
-    function mtDefaultRowsFactory($timeout) {
-      return {
-        restrict: 'A',
-        require: 'mtMutableTable',
-        link: link
-      };
-
-      function link(scope, elem, attrs, mtMutableTable) {
-        $timeout(function() {
-          attrs.mtDefaultRows.split('|').forEach(function(va) {
-            if (mtMutableTable.rowStubs.indexOf(va) < 0) {
-              mtMutableTable.rowStubs.push(va);
-            }
-          });
-        });
-      }
+    'mtDefaultVectorLinkFactory',
+    function mtDefaultRowsFactory(mtDefaultVectorLinkFactory) {
+      return mtDefaultVectorLinkFactory({
+        target: 'rowStubs'
+      });
     }
   ])
 
@@ -841,6 +835,7 @@ SOFTWARE.
       
       // Getting pretty big :/
       // Considering a rewrite that uses an isolate scope instead of manually working with attrs.
+      // Or, abstract some of the attributes into separate directives.
       function link(scope, elem, attrs, ctrl) {
         // Properties and methods
         scope.xeditableFormActive = false;
