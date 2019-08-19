@@ -212,11 +212,11 @@ SOFTWARE.
           }
           $timeout(function() {
             attrs[attribute].split('|').forEach(function(val) {
-              switch (val) {
-                case 'columnHeads': 
+              switch (attribute) {
+                case 'mtLockColumns': 
                   mtMutableTable.lockColumn(val);
                   break;
-                case 'rowStubs':
+                case 'mtLockRows':
                   mtMutableTable.lockRow(val);
                   break;
               }
