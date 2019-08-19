@@ -174,8 +174,12 @@ SOFTWARE.
     '$timeout',
     function mtDefaultVectorDirectiveFactoryFactory($timeout) {
       return function mtDefaultVectorDirectiveFactory(config) {
-        var attribute = config.attribute,
-            target = config.target;
+        var 
+        // The attribute that this instance is checking, in camel case. 
+        attribute = config.attribute,
+        // The property on the mtMutableTable controller that is targeted
+        // (rowStubs|columnHeads)
+        target = config.target;
         return {
           restrict: 'A',
           require: 'mtMutableTable',
