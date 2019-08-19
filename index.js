@@ -151,6 +151,25 @@ SOFTWARE.
     }
   ])
 
+  .directive('mtDefaultCellValue', [
+    '$timeout',
+    function mtDefaultValueFactory($timeout) {
+      return {
+        restrict: 'A',
+        require: 'mtMutableTable',
+        link: link
+      };
+      function link(scope, elem, attrs, mtMutableTable) {
+        if (!attrs.mtDefaultCellValue) {
+          throw new Error('No default cell value provided');
+        }
+        $timeout(function() {
+          mtMutableTable.defaultCellValue = attrs.mtDefaultCellValue;
+        });
+      }
+    }
+  ])
+
   .factory('mtDefaultVectorDirectiveFactory', [
     '$timeout',
     function mtDefaultVectorDirectiveFactoryFactory($timeout) {
@@ -418,7 +437,7 @@ SOFTWARE.
          */
         self.cells = [];
 
-        self.defaultValue = "";
+        self.defaultCellValue = "";
         
         // @Protected properties (not published on parent scope)
         
@@ -643,7 +662,7 @@ SOFTWARE.
                 cells.push({
                   columnHead: columnHeads[c],
                   rowStub: rowStubs[r],
-                  value: self.defaultValue
+                  value: self.defaultCellValue
                 });
               }
             }
