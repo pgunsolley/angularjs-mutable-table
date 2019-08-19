@@ -212,7 +212,7 @@ SOFTWARE.
           }
           $timeout(function() {
             attrs[attribute].split('|').forEach(function(val) {
-              switch (attribute) {
+              switch (attrs[attribute]) {
                 case 'columnHeads': 
                   mtMutableTable.lockColumn(val);
                   break;
