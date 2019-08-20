@@ -124,7 +124,7 @@ SOFTWARE.
     };
   })
 
-  .value('mtP2pLinkFactory', function mtP2pLinkFactoryFactory() {
+  .value('mtP2pLinkFactory', function() {
     return function(scope, elem, attr, [form]) {
       let parent, mtP2pNamespace;
       if (!attr.mtP2pNamespace || attr.mtP2pNamespace === "") {
@@ -151,121 +151,94 @@ SOFTWARE.
     }
   ])
 
-  .directive('mtDefaultCellValue', [
+  // TODO: Make the required directives more dry since they share
+  // a lot of functionality 
+  // TODO: Rename 'required' to 'default'...
+  // they aren't really required... why did I call it that?
+  .directive('mtDefaultColumns', [
     '$timeout',
-    function mtDefaultValueFactory($timeout) {
+    function mtDefaultColumnsFactory($timeout) {
       return {
         restrict: 'A',
         require: 'mtMutableTable',
         link: link
       };
+
       function link(scope, elem, attrs, mtMutableTable) {
-        if (!attrs.mtDefaultCellValue) {
-          throw new Error('No default cell value provided');
-        }
         $timeout(function() {
-          mtMutableTable.defaultCellValue = attrs.mtDefaultCellValue;
+          attrs.mtDefaultColumns.split('|').forEach(function(val) {
+            if (mtMutableTable.columnHeads.indexOf(val) < 0) {
+              mtMutableTable.columnHeads.push(val);
+            }
+          });
         });
       }
     }
   ])
 
-  .factory('mtDefaultVectorDirectiveFactory', [
-    '$timeout',
-    function mtDefaultVectorDirectiveFactoryFactory($timeout) {
-      return function mtDefaultVectorDirectiveFactory(config) {
-        var 
-        // The attribute that this instance is checking, in camel case. 
-        attribute = config.attribute,
-        // The property on the mtMutableTable controller that is targeted
-        // (rowStubs|columnHeads)
-        target = config.target;
-        return {
-          restrict: 'A',
-          require: 'mtMutableTable',
-          link: link
-        };
-        function link(scope, elem, attrs, mtMutableTable) {
-          $timeout(function() {
-            attrs[attribute].split('|').forEach(function(val) {
-              // If the string is a valid <target>, push it on 
-              // link.
-              if (mtMutableTable[target].indexOf(val) < 0) {
-                mtMutableTable[target].push(val);
-              }
-            });
-          });
-        }
-      }
-    }
-  ])
-
-  .factory('mtLockVectorDirectiveFactory', [
-    '$timeout',
-    function mtLockVectorDirectiveFactoryFactory($timeout) {
-      return function mtLockVectorDirectiveFactory(config) {
-        var attribute = config.attribute;
-        return {
-          restrict: 'A',
-          require: 'mtMutableTable',
-          link: link
-        };
-        function link(scope, elem, attrs, mtMutableTable) {
-          if (!attrs[attribute]) {
-            throw new MutableTableError('Missing attribute');
-          }
-          $timeout(function() {
-            attrs[attribute].split('|').forEach(function(val) {
-              switch (attribute) {
-                case 'mtLockColumns': 
-                  mtMutableTable.lockColumn(val);
-                  break;
-                case 'mtLockRows':
-                  mtMutableTable.lockRow(val);
-                  break;
-              }
-            });
-          });
-        }
-      }
-    }
-  ])
-
-  .directive('mtDefaultColumns', [
-    'mtDefaultVectorDirectiveFactory',
-    function mtDefaultColumnsFactory(mtDefaultVectorDirectiveFactory) {
-      return mtDefaultVectorDirectiveFactory({
-        target: 'columnHeads',
-        attribute: 'mtDefaultColumns'
-      });
-    }
-  ])
-
+  // TODO: Make dry with requiredColumn ^
   .directive('mtDefaultRows', [ 
-    'mtDefaultVectorDirectiveFactory',
-    function mtDefaultRowsFactory(mtDefaultVectorDirectiveFactory) {
-      return mtDefaultVectorDirectiveFactory({
-        target: 'rowStubs',
-        attribute: 'mtDefaultRows'
-      });
+    '$timeout',
+    function mtDefaultRowsFactory($timeout) {
+      return {
+        restrict: 'A',
+        require: 'mtMutableTable',
+        link: link
+      };
+
+      function link(scope, elem, attrs, mtMutableTable) {
+        $timeout(function() {
+          attrs.mtDefaultRows.split('|').forEach(function(va) {
+            if (mtMutableTable.rowStubs.indexOf(va) < 0) {
+              mtMutableTable.rowStubs.push(va);
+            }
+          });
+        });
+      }
     }
   ])
 
   .directive('mtLockColumns', [
     '$timeout',
-    function mtLockColumnsFactory(mtLockVectorDirectiveFactory) {
-      return mtLockVectorDirectiveFactory({
-        attribute: 'mtLockColumns'
-      });
+    function mtLockColumnsFactory($timeout) {
+      return {
+        restrict: 'A',
+        require: 'mtMutableTable',
+        link: link
+      };
+
+      function link(scope, elem, attrs, mtMutableTable) {
+        if (!attrs.mtLockColumns) {
+          throw new MutableTableError('attribute mt-lock-columns must have a value');
+        }
+        $timeout(function() {
+          attrs.mtLockColumns.split('|').forEach(function(val) {
+            mtMutableTable.lockColumn(val);
+          });
+        });
+      }
     }
   ])
 
   .directive('mtLockRows', [
-    'mtLockVectorDirectiveFactory', 
-    function mtLockRowsFactory(mtLockVectorDirectiveFactory) {
-      return mtLockVectorDirectiveFactory({
-        attribute: 'mtLockRows'
-      });
+    '$timeout', 
+    function mtLockRowsFactory($timeout) {
+      return {
+        restrict: 'A',
+        require: 'mtMutableTable',
+        link: link
+      };
+
+      function link(scope, elem, attrs, mtMutableTable) {
+        if (!attrs.mtLockRows) {
+          throw new MutableTableError('attribute mt-lock-rows must have a value');
+        }
+        $timeout(function() {
+          attrs.mtLockRows.split('|').forEach(function(val) {
+            mtMutableTable.lockRow(val);
+          });
+        });
+      }
     }
   ])
 
@@ -440,8 +413,6 @@ SOFTWARE.
          * }
          */
         self.cells = [];
-
-        self.defaultCellValue = "";
         
         // @Protected properties (not published on parent scope)
         
@@ -666,7 +637,7 @@ SOFTWARE.
                 cells.push({
                   columnHead: columnHeads[c],
                   rowStub: rowStubs[r],
-                  value: self.defaultCellValue
+                  value: ''
                 });
               }
             }
@@ -870,7 +841,6 @@ SOFTWARE.
       
       // Getting pretty big :/
       // Considering a rewrite that uses an isolate scope instead of manually working with attrs.
-      // Or, abstract some of the attributes into separate directives.
       function link(scope, elem, attrs, ctrl) {
         // Properties and methods
         scope.xeditableFormActive = false;
@@ -935,7 +905,6 @@ SOFTWARE.
         scope.checkboxUncheckedText = attrs.mtCheckboxUncheckedText;
         scope.checkboxCheckedTextPosition = attrs.mtCheckboxCheckedTextPosition || 'left';
         scope.checkboxUncheckedTextPosition = attrs.mtCheckboxUncheckedTextPosition || 'left';
-        
 
         scope.startWatching();
 
