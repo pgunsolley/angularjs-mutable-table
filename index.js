@@ -176,6 +176,25 @@ SOFTWARE.
     }
   ])
 
+  .directive('mtDefaultCellValue', [
+    '$timeout',
+    function mtDefaultValueFactory($timeout) {
+      return {
+        restrict: 'A',
+        require: 'mtMutableTable',
+        link: link
+      };
+      function link(scope, elem, attrs, mtMutableTable) {
+        if (!attrs.mtDefaultCellValue) {
+          throw new Error('No default cell value provided');
+        }
+        $timeout(function() {
+          mtMutableTable.defaultCellValue = attrs.mtDefaultCellValue;
+        });
+      }
+    }
+  ])
+
   // TODO: Make dry with requiredColumn ^
   .directive('mtDefaultRows', [ 
     '$timeout',
