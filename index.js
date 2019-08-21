@@ -135,6 +135,8 @@ SOFTWARE.
   *
   * type ValidationError = { name: string, errorMessage: string }
   */
+  // FIXME: This works, however it doesn't work the "angular way". 
+  // Consider reworking this when rewriting.
   .value('mtValidation', function mtValidation() {
     return {
       validators: {},
