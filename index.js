@@ -20,6 +20,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+// FIXME: Locked columns are broken!
+
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['angular'], factory);
