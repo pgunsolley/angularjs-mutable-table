@@ -319,7 +319,7 @@ SOFTWARE.
                   
                   // Bound checkbox label for when no forms are active, and 
                   // checkbox position is right
-                  '<span ng-show="(showCheckbox && !mt.busy) && ((cell.checked && checkboxCheckedTextPosition === \'right\') || (!cell.checked && checkboxUncheckedTextPosition === \'right\'))"><b>{{cell.checked ? checkboxCheckedText : checkboxUncheckedText}}</b></span>' +
+                  '<span ng-show="(showCheckbox && !mt.busy) && ((cell.checked && checkboxCheckedTextPosition === \'right\') || (!cell.checked && checkboxUncheckedTextPosition === \'right\'))">{{cell.checked ? checkboxCheckedText : checkboxUncheckedText}}</span>' +
                   
                   // Fill left and right controls for row form
                   '<button ng-show="rowForm.$visible && $index > 0" type="button" class="{{fillBtnClass}}" ng-click="fillLeft($index, rowForm)">&#8592;</button>' +
