@@ -20,9 +20,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-// TODO: Add ability to remove "REMOVE" buttons on columns, rows and both 
-// TODO: Add ability to transclude special directives into specific locations within the template
-// TODO: Maybe add a special property to each cell for custom data (like { meta: {} }))
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['angular'], factory);
@@ -50,6 +47,74 @@ SOFTWARE.
 
   angular
   .module('mutable-table', ['xeditable'])
+
+  // A global service that holds text messages from the mutable table instances.
+  .factory('mtMessages', [
+    function mtMessagesFactory() {
+      /**
+       * @constructor
+       */
+      function MtMessages() {
+        this.messages = [];
+      }
+
+      /**
+       * Returns true if the argument is a valad messageDescription
+       * @param {*} messageDescription 
+       */
+      function validateMessageDescription(messageDescription) {
+        return (
+          messageDescription instanceof Object 
+            && messageDescription.controller !== undefined // would be better if we could check the prototype
+            && typeof messageDescription.message === 'string'
+            && typeof messageDescription.tableName === 'string'
+        );
+      }
+
+      /**
+       * Adds a new message description object to cache
+       * @param {*} messageDescription 
+       */
+      function add(messageDescription) {
+        if (!validateMessageDescription(messageDescription)) {
+          throw new MutableTableError('Argument is not a valid MessageDescription');
+        }
+        this.messages.push(messageDescription);
+      }
+
+      /**
+       * Remove all messages
+       */
+      function clear() {
+        this.messages = [];
+      }
+
+      /**
+       * A factory for internal use; generates a method 
+       * helper for removing message description objects.
+       * @param {*} target 
+       */
+      function clearByFactory(target) {
+        return function clearBy(val) {
+          for (var i = 0; i < this.messages.length; ++i) {
+            if (this.messages[i][target] === val) {
+              this.messages.splice(i, 1);
+              --i;
+            }
+          }
+        }
+      }
+
+      Object.defineProperties(MtMessages.prototype, {
+        add: { value: add },
+        clear: { value: clear },
+        clearByTableName: { value: clearByFactory('tableName') },
+        clearByTableController: { value: clearByFactory('controller') },
+        clearByMessage: { value: clearByFactory('message') }
+      });
+      return MtMessages;
+    }
+  ])
 
 /**
   * Validators for rows, columns and cells.
@@ -400,6 +465,13 @@ SOFTWARE.
             }
           }
         });
+
+        /**
+         * The name of the controller. It is also the name of 
+         * the namespace on the parent scope for the controller.
+         * This is set with the attribute [name]
+         */
+        self.name = $attrs.name;
 
         /**
          * Validators that are checked on each digest cycle.
