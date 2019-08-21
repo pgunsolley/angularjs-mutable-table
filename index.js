@@ -301,7 +301,7 @@ SOFTWARE.
                   '<span ng-show="(showCheckbox && !mt.busy) && ((cell.checked && checkboxCheckedTextPosition === \'left\') || (!cell.checked && checkboxUncheckedTextPosition === \'left\'))">{{cell.checked ? checkboxCheckedText : checkboxUncheckedText}}</span>' +
                   
                   // Bound cell value for display when no forms are active
-                  '<span ng-show="!rowForm.$visible && !getColumnForm(\'columnForm\' + $index).$visible">{{cell.value}}</span>' + 
+                  '<span ng-show="!rowForm.$visible && !getColumnForm(\'columnForm\' + $index).$visible"><b>{{cell.value}}</b></span>' + 
                   
                   // Checkbox bound to column form
                   '<span ng-if="showCheckbox && getColumnForm(\'columnForm\' + $index).$visible" e-class="mt-cell-checkbox" editable-checkbox="cell.checked" e-form="getColumnForm(\'columnForm\' + $index)" e-name="{{\'checkbox\' + tableModel.indexOf(rowObj)}}"></span>' + 
