@@ -744,7 +744,6 @@ SOFTWARE.
               }
             }
           } 
-          storeLockedCells(cells);
         }
 
         /**
@@ -798,12 +797,6 @@ SOFTWARE.
                 columnHeads.indexOf(cells[cc].columnHead) === -1
                 // Or if the rowStub that the cell belongs to no longer exists
                 || rowStubs.indexOf(cells[cc].rowStub) === -1
-              )
-              // And checks if the corresponding columnHead or rowStub do not 
-              // belong to locked rows/columns
-              && !(
-                self.isLockedColumn(cells[cc].columnHead)
-                || self.isLockedRow(cells[cc].rowStub)
               )
             ) {
               removed.push(cells.splice(cc, 1)[0]);
@@ -871,9 +864,9 @@ SOFTWARE.
             // Now lock any new cells that correspond to locked columnHeads or rowStubs
             // By passing true as the 2nd arg, we are also removing those cells from 
             // the original array (to prevent duplicates when we concatenate the arrays afterward).
-            storeLockedCells(cells, true);
+            // storeLockedCells(cells, true);
             // Then reset the cells
-            self.cells = cells.concat($scope.locks.cells);
+            self.cells = cells;
             applyCells(self.cells);
             hooks.afterInit();
             self.render();
@@ -1053,7 +1046,7 @@ SOFTWARE.
           ctrl.validators.cells.validate(ctrl.cells);
           
           // Reset active editable forms and render new model
-          resetLockedColumnsAndRows();
+          //resetLockedColumnsAndRows();
           ctrl.render();
         }
 
