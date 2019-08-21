@@ -1037,9 +1037,6 @@ SOFTWARE.
           self.closeAllForms();
 
           // Values are the same during initialization
-          if (newVal === oldVal) {
-            return;
-          }
           if (newLength > oldLength) {
             ctrl.addCells();
           }
